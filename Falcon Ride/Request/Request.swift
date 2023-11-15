@@ -20,6 +20,12 @@ struct Request: View {
     let rides = [
         Ride(destination: "DIA", time: "2:00 PM", date: "Nov 2", seats: "3"),
         Ride(destination: "COS", time: "2:30 PM", date: "Nov 2", seats: "3"),
+        Ride(destination: "BREC", time: "3:00 PM", date: "Nov 2", seats: "3"),
+        Ride(destination: "DIA", time: "2:00 PM", date: "Nov 2", seats: "3"),
+        Ride(destination: "COS", time: "2:30 PM", date: "Nov 2", seats: "3"),
+        Ride(destination: "BREC", time: "3:00 PM", date: "Nov 2", seats: "3"),
+        Ride(destination: "DIA", time: "2:00 PM", date: "Nov 2", seats: "3"),
+        Ride(destination: "COS", time: "2:30 PM", date: "Nov 2", seats: "3"),
         Ride(destination: "BREC", time: "3:00 PM", date: "Nov 2", seats: "3")
     ]
 
@@ -47,10 +53,15 @@ struct Request: View {
                             .font(.headline)
                         Text(ride2.time)
                             .font(.subheadline)
+                        Text(ride2.date)
+                            .font(.subheadline)
+                        Text("Seats available: \(ride2.seats)")
+                            .font(.subheadline)
                     }
+                    .padding(.vertical, 4)
                 }
             }
-            .navigationBarTitle("Requests")
+            .navigationBarTitle("Available Rides")
             .navigationBarItems(trailing:
                 Button(action: {
                     // Action for adding a new ride
@@ -62,7 +73,6 @@ struct Request: View {
         }
     }
 }
-
 struct Request_Previews: PreviewProvider {
     static var previews: some View {
         Request()

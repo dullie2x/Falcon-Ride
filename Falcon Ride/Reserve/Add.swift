@@ -18,20 +18,26 @@ struct AddView: View {
     var body: some View {
         NavigationView {
             Form {
-                Section(header: Text("Ride Details")) {
+                Section(header: Text("Ride Details").font(.headline)) {
                     TextField("From", text: $fromLocation)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
                     TextField("To", text: $toLocation)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
                     TextField("Number of Seats", text: $seats)
+                        .keyboardType(.numberPad)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
                 }
 
-                Section(header: Text("Date and Time")) {
+                Section(header: Text("Date and Time").font(.headline)) {
                     DatePicker("Select Date and Time", selection: $selectedDate, displayedComponents: [.date, .hourAndMinute])
-                        .datePickerStyle(.wheel)
+                        .datePickerStyle(GraphicalDatePickerStyle())
                 }
 
-                Section(header: Text("Additional Information")) {
+                Section(header: Text("Additional Information").font(.headline)) {
                     TextField("Donation Requested", text: $donationRequested)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
                     TextField("Other Details", text: $otherDetails)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
                 }
 
                 Button(action: {
@@ -44,11 +50,11 @@ struct AddView: View {
                         .background(Color.blue)
                         .foregroundColor(.white)
                         .cornerRadius(10)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 10)
                 }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 10)
             }
-            .navigationBarTitle("Add Ride")
+            .navigationBarTitle("Add Ride", displayMode: .inline)
         }
     }
 }

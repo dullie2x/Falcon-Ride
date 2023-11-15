@@ -20,6 +20,12 @@ struct Reserve: View {
     let rides = [
         Ride(destination: "DIA", time: "2:00 PM", date: "Nov 2", seats: "3"),
         Ride(destination: "COS", time: "2:30 PM", date: "Nov 2", seats: "3"),
+        Ride(destination: "BREC", time: "3:00 PM", date: "Nov 2", seats: "3"),
+        Ride(destination: "DIA", time: "2:00 PM", date: "Nov 2", seats: "3"),
+        Ride(destination: "COS", time: "2:30 PM", date: "Nov 2", seats: "3"),
+        Ride(destination: "BREC", time: "3:00 PM", date: "Nov 2", seats: "3"),
+        Ride(destination: "DIA", time: "2:00 PM", date: "Nov 2", seats: "3"),
+        Ride(destination: "COS", time: "2:30 PM", date: "Nov 2", seats: "3"),
         Ride(destination: "BREC", time: "3:00 PM", date: "Nov 2", seats: "3")
     ]
 
@@ -47,7 +53,12 @@ struct Reserve: View {
                             .font(.headline)
                         Text(ride.time)
                             .font(.subheadline)
+                        Text(ride.date)
+                            .font(.subheadline)
+                        Text("Seats available: \(ride.seats)")
+                            .font(.subheadline)
                     }
+                    .padding(.vertical, 4)
                 }
             }
             .navigationBarTitle("Available Rides")
@@ -68,4 +79,3 @@ struct Reserve_Previews: PreviewProvider {
         Reserve()
     }
 }
-
