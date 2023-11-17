@@ -114,12 +114,13 @@
 				A0C2F0A12B0291B700685DE5 /* ContentView.swift */,
 				A01666572B05283700C73157 /* TabController.swift */,
 				A04D44472B06A10900B39A68 /* SplashView.swift */,
+				A0C2F0C92B0294C500685DE5 /* Login */,
 				A0C2F0CB2B02952B00685DE5 /* Reserve */,
 				A0C2F0CC2B02954A00685DE5 /* Request */,
 				A0C2F0CD2B02955300685DE5 /* Profile */,
 				A0C2F0CE2B02992A00685DE5 /* User Reserve */,
+				A0E78FE32B074BC200A0678F /* Settings */,
 				A0C2F0A32B0291B900685DE5 /* Assets.xcassets */,
-				A0C2F0C92B0294C500685DE5 /* Login */,
 				A0C2F0A52B0291B900685DE5 /* Preview Content */,
 			);
 			path = "Falcon Ride";
@@ -190,6 +191,13 @@
 			);
 			name = "User Reserve";
 			path = Profile;
+			sourceTree = "<group>";
+		};
+		A0E78FE32B074BC200A0678F /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Settings;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -501,8 +509,8 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIStatusBarStyle = "";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -530,8 +538,8 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIStatusBarStyle = "";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
