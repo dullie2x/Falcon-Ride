@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-// Dummy model for a ride
 struct Ride {
     var destination: String
     var time: String
@@ -16,7 +15,6 @@ struct Ride {
 }
 
 struct Reserve: View {
-    // Sample data for available rides
     let rides = [
         Ride(destination: "DIA", time: "2:00 PM", date: "Nov 2", seats: "3"),
         Ride(destination: "COS", time: "2:30 PM", date: "Nov 2", seats: "3"),
@@ -29,48 +27,65 @@ struct Reserve: View {
         Ride(destination: "BREC", time: "3:00 PM", date: "Nov 2", seats: "3")
     ]
 
-    @State private var searchText = "" // Add a state variable for search text
+    @State private var searchText = ""
+    @State private var showingAddView = false
 
     var body: some View {
         NavigationView {
-            List {
+            VStack {
                 // Search bar
                 HStack {
-                    Image(systemName: "magnifyingglass") // Search icon
-                    TextField("Search", text: $searchText) // Search text field
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(.gray)
+                    TextField("Search", text: $searchText)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
                 }
-                .padding(.vertical, 8)
-                .padding(.horizontal, 16)
+                .padding()
                 .background(Color(.systemGray6))
-                .cornerRadius(8)
-                .padding(.horizontal, 16)
+                .cornerRadius(10)
+                .padding()
 
-                ForEach(rides.filter {
+                // List of rides
+                List(rides.filter {
                     searchText.isEmpty || $0.destination.localizedCaseInsensitiveContains(searchText)
                 }, id: \.destination) { ride in
-                    VStack(alignment: .leading) {
-                        Text(ride.destination)
-                            .font(.headline)
-                        Text(ride.time)
-                            .font(.subheadline)
-                        Text(ride.date)
-                            .font(.subheadline)
-                        Text("Seats available: \(ride.seats)")
-                            .font(.subheadline)
-                    }
-                    .padding(.vertical, 4)
+                    RideCell(ride: ride)
                 }
+
+                NavigationLink(destination: AddView(), isActive: $showingAddView) { EmptyView() }
             }
             .navigationBarTitle("Available Rides")
             .navigationBarItems(trailing:
                 Button(action: {
-                    // Action for adding a new ride
-                    print("Add Ride Tapped")
+                    showingAddView = true
                 }) {
-                    Image(systemName: "plus.app")
+                    Image(systemName: "plus")
+                        .imageScale(.large)
+                        .padding()
                 }
             )
         }
+    }
+}
+
+struct RideCell: View {
+    var ride: Ride
+
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading) {
+                Text(ride.destination)
+                    .font(.headline)
+                Text("\(ride.date) at \(ride.time)")
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
+            }
+            Spacer()
+            Text("\(ride.seats) seats")
+                .font(.subheadline)
+                .foregroundColor(.blue)
+        }
+        .padding()
     }
 }
 

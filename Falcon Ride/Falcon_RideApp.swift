@@ -12,7 +12,7 @@ import SwiftUI
 struct Falcon_RideApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SplashView()
         }
     }
 }

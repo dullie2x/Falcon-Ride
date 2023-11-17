@@ -23,7 +23,7 @@ struct AddRequestView: View {
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                     TextField("To", text: $toLocation)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
-                    TextField("Number of Seats", text: $seats)
+                    TextField("Number of Seats Needed", text: $seats)
                         .keyboardType(.numberPad)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                 }
@@ -44,7 +44,7 @@ struct AddRequestView: View {
                     // Action for posting the ride request
                     print("Post Button Tapped")
                 }) {
-                    Text("Post")
+                    Text("Add Request")
                         .frame(maxWidth: .infinity)
                         .frame(height: 50)
                         .background(Color.blue)
@@ -54,7 +54,9 @@ struct AddRequestView: View {
                 .padding(.horizontal, 20)
                 .padding(.vertical, 10)
             }
-            .navigationBarTitle("Add Ride", displayMode: .inline)
+            //.navigationBarTitle("Add Ride", displayMode: .inline)
+            .padding(.top, -20)
+            //.edgesIgnoringSafeArea(.top)
         }
     }
 }

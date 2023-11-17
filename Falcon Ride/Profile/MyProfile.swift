@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct UserProfile: View {
+struct MyProfile: View {
     var body: some View {
         NavigationView {
             VStack(alignment: .leading) { // Align everything to the left
@@ -105,8 +105,8 @@ struct UserProfile: View {
     }
 }
 
-struct UserProfile_Previews: PreviewProvider {
+struct MyProfile_Previews: PreviewProvider {
     static var previews: some View {
-        UserProfile()
+        MyProfile()
     }
 }

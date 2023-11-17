@@ -7,12 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A01666582B05283700C73157 /* TabController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01666572B05283700C73157 /* TabController.swift */; };
 		A01D50032B03E38700535DF1 /* Reserve.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01D50022B03E38700535DF1 /* Reserve.swift */; };
 		A01D50052B0495B400535DF1 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01D50042B0495B400535DF1 /* Request.swift */; };
 		A01D50072B0496F400535DF1 /* MyProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01D50062B0496F400535DF1 /* MyProfile.swift */; };
 		A01D50092B0499C700535DF1 /* Add.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01D50082B0499C700535DF1 /* Add.swift */; };
 		A01D500B2B0499EB00535DF1 /* AddRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01D500A2B0499EB00535DF1 /* AddRequest.swift */; };
 		A01D500D2B049D2E00535DF1 /* NotMyProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01D500C2B049D2E00535DF1 /* NotMyProfile.swift */; };
+		A04D44482B06A10900B39A68 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A04D44472B06A10900B39A68 /* SplashView.swift */; };
 		A0C2F0A02B0291B700685DE5 /* Falcon_RideApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2F09F2B0291B700685DE5 /* Falcon_RideApp.swift */; };
 		A0C2F0A22B0291B700685DE5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2F0A12B0291B700685DE5 /* ContentView.swift */; };
 		A0C2F0A42B0291B900685DE5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A0C2F0A32B0291B900685DE5 /* Assets.xcassets */; };
@@ -40,12 +42,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A01666572B05283700C73157 /* TabController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabController.swift; sourceTree = "<group>"; };
 		A01D50022B03E38700535DF1 /* Reserve.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reserve.swift; sourceTree = "<group>"; };
 		A01D50042B0495B400535DF1 /* Request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
 		A01D50062B0496F400535DF1 /* MyProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfile.swift; sourceTree = "<group>"; };
 		A01D50082B0499C700535DF1 /* Add.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Add.swift; sourceTree = "<group>"; };
 		A01D500A2B0499EB00535DF1 /* AddRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRequest.swift; sourceTree = "<group>"; };
 		A01D500C2B049D2E00535DF1 /* NotMyProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotMyProfile.swift; sourceTree = "<group>"; };
+		A04D44472B06A10900B39A68 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		A0C2F09C2B0291B600685DE5 /* Falcon Ride.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Falcon Ride.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0C2F09F2B0291B700685DE5 /* Falcon_RideApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Falcon_RideApp.swift; sourceTree = "<group>"; };
 		A0C2F0A12B0291B700685DE5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -108,6 +112,8 @@
 			children = (
 				A0C2F09F2B0291B700685DE5 /* Falcon_RideApp.swift */,
 				A0C2F0A12B0291B700685DE5 /* ContentView.swift */,
+				A01666572B05283700C73157 /* TabController.swift */,
+				A04D44472B06A10900B39A68 /* SplashView.swift */,
 				A0C2F0CB2B02952B00685DE5 /* Reserve */,
 				A0C2F0CC2B02954A00685DE5 /* Request */,
 				A0C2F0CD2B02955300685DE5 /* Profile */,
@@ -318,11 +324,13 @@
 			files = (
 				A01D500B2B0499EB00535DF1 /* AddRequest.swift in Sources */,
 				A0C2F0A22B0291B700685DE5 /* ContentView.swift in Sources */,
+				A04D44482B06A10900B39A68 /* SplashView.swift in Sources */,
 				A01D50072B0496F400535DF1 /* MyProfile.swift in Sources */,
 				A01D50052B0495B400535DF1 /* Request.swift in Sources */,
 				A01D50032B03E38700535DF1 /* Reserve.swift in Sources */,
 				A01D500D2B049D2E00535DF1 /* NotMyProfile.swift in Sources */,
 				A0C2F0A02B0291B700685DE5 /* Falcon_RideApp.swift in Sources */,
+				A01666582B05283700C73157 /* TabController.swift in Sources */,
 				A01D50092B0499C700535DF1 /* Add.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
