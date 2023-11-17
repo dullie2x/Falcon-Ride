@@ -54,7 +54,7 @@ struct Request: View {
 
                 NavigationLink(destination: AddRequestView(), isActive: $showingAddView) { EmptyView() }
             }
-            .navigationBarTitle("Ride requests")
+            .navigationBarTitle("Ride Requests")
             .navigationBarItems(trailing:
                 Button(action: {
                     showingAddView = true
