@@ -10,26 +10,37 @@ import SwiftUI
 struct MyProfile: View {
     var body: some View {
         NavigationView {
-            ScrollView { // Use ScrollView for content that may exceed screen size
+            ScrollView {
                 VStack(alignment: .leading) {
                     ProfileHeaderView()
-                    
-                    //UserInfoView()
-                      //  .padding(.horizontal)
-                        //   .padding(.top, 20)
+                        .shadow(radius: 10)
+                        .padding()
 
                     SectionHeaderView(title: "Reservations")
+                        .padding(.horizontal, 16)
+                        .shadow(radius: 5)
                     ReservationView(destination: "DIA", date: "November 20, 2023")
+                        .padding(.horizontal)
+                        .shadow(radius: 5)
                     ReservationView(destination: "BREC", date: "November 22, 2023")
+                        .padding(.horizontal)
+                        .shadow(radius: 5)
 
                     SectionHeaderView(title: "Requests")
+                        .padding(.horizontal, 16)
+                        .shadow(radius: 5)
                     RequestView(destination: "COS", date: "November 25, 2023")
+                        .padding(.horizontal)
+                        .shadow(radius: 5)
                     RequestView(destination: "DIA", date: "November 30, 2023")
+                        .padding(.horizontal)
+                        .shadow(radius: 5)
                 }
                 .padding()
             }
             .navigationBarTitle("My Profile", displayMode: .inline)
             .navigationBarItems(trailing: SettingsButton())
+            .background(LinearGradient(gradient: Gradient(colors: [Color.white, Color.gray.opacity(0.2)]), startPoint: .top, endPoint: .bottom))
         }
     }
 }
@@ -42,6 +53,7 @@ struct ProfileHeaderView: View {
                 .scaledToFit()
                 .frame(width: 120, height: 120)
                 .clipShape(Circle())
+                .shadow(radius: 5)
                 .padding(.trailing, 16)
 
             VStack(alignment: .leading, spacing: 8) {
@@ -55,23 +67,23 @@ struct ProfileHeaderView: View {
     }
 }
 
-//struct UserInfoView: View {
-  //  var body: some View {
-        // Additional user information can be placed here
-    //    Text("More User Info")
-      //      .frame(maxWidth: .infinity, alignment: .leading)
-   // }
-//}
-
 struct SectionHeaderView: View {
     var title: String
     
     var body: some View {
         Text(title)
-            .font(.title2)
-            .padding(.vertical, 10)
+            .font(.headline)
+            .fontWeight(.bold)
+            .padding(.vertical, 8)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color.blue.opacity(0.1))
+            .cornerRadius(10)
+            .padding(.top, 10)
     }
 }
+
+// Define ReservationView, RequestView, SettingsButton as per your design
+
 
 struct ReservationView: View {
     var destination: String
