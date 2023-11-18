@@ -41,7 +41,7 @@ struct SplashView: View {
 
 // Define an extension for the custom color
 extension Color {
-    static let darkBlue = Color(red: 0.1, green: 0.2, blue: 0.45)
+    static let darkBlue = Color(red: 0.1, green: 0.2, blue: 0.7)
 }
 
 struct SplashView_Previews: PreviewProvider {

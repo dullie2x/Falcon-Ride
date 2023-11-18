@@ -38,7 +38,7 @@ struct OtherUserProfile: View {
                        .shadow(radius: 10)
                        .padding()
 
-                   SectionHeaderView(title: "Reservations")
+                   SectionHeaderView(title: "Available Rides")
                        .padding(.horizontal, 16) // Moving title away from the edge
                        .shadow(radius: 5)
                    ForEach(reservations, id: \.self) { reservation in
@@ -50,7 +50,7 @@ struct OtherUserProfile: View {
                            .padding(.horizontal)
                    }
 
-                   SectionHeaderView(title: "Requests")
+                   SectionHeaderView(title: "Current Requests")
                        .padding(.horizontal, 16) // Moving title away from the edge
                        .shadow(radius: 5)
                    ForEach(requests, id: \.self) { request in

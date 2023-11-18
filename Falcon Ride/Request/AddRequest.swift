@@ -33,8 +33,8 @@ struct AddRequestView: View {
                         .datePickerStyle(GraphicalDatePickerStyle())
                 }
 
-                Section(header: Text("Additional Information").font(.headline)) {
-                    TextField("Donation Requested", text: $donationRequested)
+                Section(header: Text("Additional Info.").font(.headline)) {
+                    TextField("Donation ($, Food, Gas, None)", text: $donationRequested)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                     TextField("Other Details", text: $otherDetails)
                         .textFieldStyle(RoundedBorderTextFieldStyle())

@@ -15,6 +15,9 @@
 		A01D500B2B0499EB00535DF1 /* AddRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01D500A2B0499EB00535DF1 /* AddRequest.swift */; };
 		A01D500D2B049D2E00535DF1 /* OtherUserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01D500C2B049D2E00535DF1 /* OtherUserProfile.swift */; };
 		A04D44482B06A10900B39A68 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A04D44472B06A10900B39A68 /* SplashView.swift */; };
+		A0687A9E2B07E43400A68BB8 /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0687A9D2B07E43400A68BB8 /* Login.swift */; };
+		A0687AA02B07E44200A68BB8 /* SignUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0687A9F2B07E44200A68BB8 /* SignUp.swift */; };
+		A0687AA22B07FE7100A68BB8 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0687AA12B07FE7100A68BB8 /* Settings.swift */; };
 		A0C2F0A02B0291B700685DE5 /* Falcon_RideApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2F09F2B0291B700685DE5 /* Falcon_RideApp.swift */; };
 		A0C2F0A22B0291B700685DE5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2F0A12B0291B700685DE5 /* ContentView.swift */; };
 		A0C2F0A42B0291B900685DE5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A0C2F0A32B0291B900685DE5 /* Assets.xcassets */; };
@@ -50,6 +53,9 @@
 		A01D500A2B0499EB00535DF1 /* AddRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRequest.swift; sourceTree = "<group>"; };
 		A01D500C2B049D2E00535DF1 /* OtherUserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherUserProfile.swift; sourceTree = "<group>"; };
 		A04D44472B06A10900B39A68 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
+		A0687A9D2B07E43400A68BB8 /* Login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Login.swift; sourceTree = "<group>"; };
+		A0687A9F2B07E44200A68BB8 /* SignUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUp.swift; sourceTree = "<group>"; };
+		A0687AA12B07FE7100A68BB8 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		A0C2F09C2B0291B600685DE5 /* Falcon Ride.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Falcon Ride.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0C2F09F2B0291B700685DE5 /* Falcon_RideApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Falcon_RideApp.swift; sourceTree = "<group>"; };
 		A0C2F0A12B0291B700685DE5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -118,8 +124,8 @@
 				A0C2F0CB2B02952B00685DE5 /* Reserve */,
 				A0C2F0CC2B02954A00685DE5 /* Request */,
 				A0C2F0CD2B02955300685DE5 /* Profile */,
-				A0C2F0CE2B02992A00685DE5 /* User Reserve */,
 				A0E78FE32B074BC200A0678F /* Settings */,
+				A0C2F0CE2B02992A00685DE5 /* User Reserve */,
 				A0C2F0A32B0291B900685DE5 /* Assets.xcassets */,
 				A0C2F0A52B0291B900685DE5 /* Preview Content */,
 			);
@@ -154,6 +160,8 @@
 		A0C2F0C92B0294C500685DE5 /* Login */ = {
 			isa = PBXGroup;
 			children = (
+				A0687A9D2B07E43400A68BB8 /* Login.swift */,
+				A0687A9F2B07E44200A68BB8 /* SignUp.swift */,
 			);
 			path = Login;
 			sourceTree = "<group>";
@@ -196,6 +204,7 @@
 		A0E78FE32B074BC200A0678F /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				A0687AA12B07FE7100A68BB8 /* Settings.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -331,6 +340,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				A01D500B2B0499EB00535DF1 /* AddRequest.swift in Sources */,
+				A0687AA02B07E44200A68BB8 /* SignUp.swift in Sources */,
+				A0687AA22B07FE7100A68BB8 /* Settings.swift in Sources */,
 				A0C2F0A22B0291B700685DE5 /* ContentView.swift in Sources */,
 				A04D44482B06A10900B39A68 /* SplashView.swift in Sources */,
 				A01D50072B0496F400535DF1 /* MyProfile.swift in Sources */,
@@ -339,6 +350,7 @@
 				A01D500D2B049D2E00535DF1 /* OtherUserProfile.swift in Sources */,
 				A0C2F0A02B0291B700685DE5 /* Falcon_RideApp.swift in Sources */,
 				A01666582B05283700C73157 /* TabController.swift in Sources */,
+				A0687A9E2B07E43400A68BB8 /* Login.swift in Sources */,
 				A01D50092B0499C700535DF1 /* Add.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
