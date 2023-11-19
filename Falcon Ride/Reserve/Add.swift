@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseDatabase
 
 struct AddView: View {
     @State private var fromLocation = ""
@@ -40,10 +41,7 @@ struct AddView: View {
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                 }
 
-                Button(action: {
-                    // Action for posting the ride request
-                    print("Post Button Tapped")
-                }) {
+                Button(action: postRide) {
                     Text("Add Ride")
                         .frame(maxWidth: .infinity)
                         .frame(height: 50)
@@ -54,9 +52,34 @@ struct AddView: View {
                 .padding(.horizontal, 20)
                 .padding(.vertical, 10)
             }
-            //.navigationBarTitle("Add Ride", displayMode: .inline)
+            .navigationBarTitle("Add Ride", displayMode: .inline)
             .padding(.top, -20)
-            //.edgesIgnoringSafeArea(.top)
+        }
+    }
+
+    // Function to post a ride to Firebase Realtime Database
+    func postRide() {
+        let rideDict: [String: Any] = [
+            "fromLocation": fromLocation,
+            "toLocation": toLocation,
+            "seats": seats,
+            "date": DateFormatter.localizedString(from: selectedDate, dateStyle: .medium, timeStyle: .short),
+            "donationRequested": donationRequested,
+            "otherDetails": otherDetails
+        ]
+
+        // Reference to the Firebase Database
+        let ref = Database.database().reference()
+        
+        // Posting the ride under a 'rides' node
+        ref.child("rides").childByAutoId().setValue(rideDict) { (error, reference) in
+            if let error = error {
+                // Handle the error
+                print("Error posting ride: \(error.localizedDescription)")
+            } else {
+                // Successfully posted
+                // Reset form or navigate away
+            }
         }
     }
 }

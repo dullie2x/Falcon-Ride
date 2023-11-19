@@ -7,12 +7,38 @@
 ///
 
 import SwiftUI
+import FirebaseCore
+import FirebaseAuth
+
+// AppDelegate to initialize Firebase
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        FirebaseConfiguration.shared.setLoggerLevel(.debug)
+        FirebaseApp.configure()
+        return true
+    }
+}
 
 @main
 struct Falcon_RideApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    @StateObject private var authViewModel = AuthenticationViewModel()
+
     var body: some Scene {
         WindowGroup {
-            SplashView()
+            ParentView()
+                .environmentObject(authViewModel)
+        }
+    }
+}
+
+class AuthenticationViewModel: ObservableObject {
+    @Published var isUserAuthenticated: Bool
+
+    init() {
+        isUserAuthenticated = Auth.auth().currentUser != nil
+        Auth.auth().addStateDidChangeListener { [weak self] _, user in
+            self?.isUserAuthenticated = (user != nil)
         }
     }
 }

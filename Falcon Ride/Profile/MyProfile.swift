@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct MyProfile: View {
+    @State private var navigateToSettings = false // State for controlling navigation to Settings view
+
     var body: some View {
         NavigationView {
             ScrollView {
@@ -37,9 +39,12 @@ struct MyProfile: View {
                         .shadow(radius: 5)
                 }
                 .padding()
+
+                // Invisible NavigationLink for programmatic navigation
+                NavigationLink(destination: Settings(), isActive: $navigateToSettings) { EmptyView() }
             }
             .navigationBarTitle("My Profile", displayMode: .inline)
-            .navigationBarItems(trailing: SettingsButton())
+            .navigationBarItems(trailing: SettingsButton(action: { navigateToSettings = true }))
             .background(LinearGradient(gradient: Gradient(colors: [Color.white, Color.gray.opacity(0.2)]), startPoint: .top, endPoint: .bottom))
         }
     }
@@ -124,11 +129,10 @@ struct RequestView: View {
 }
 
 struct SettingsButton: View {
+    var action: () -> Void
+
     var body: some View {
-        Button(action: {
-            // Action for settings button
-            print("Settings Tapped")
-        }) {
+        Button(action: action) {
             Image(systemName: "gear")
                 .imageScale(.large)
         }

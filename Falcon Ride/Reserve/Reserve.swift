@@ -6,90 +6,100 @@
 //
 
 import SwiftUI
+import FirebaseDatabase
 
-struct Ride {
-    var destination: String
-    var time: String
-    var date: String
+struct Ride: Identifiable {
+    var id: String
+    var fromLocation: String
+    var toLocation: String
     var seats: String
+    var date: String
 }
 
 struct Reserve: View {
-    let rides = [
-        Ride(destination: "DIA", time: "2:00 PM", date: "Nov 2", seats: "3"),
-        Ride(destination: "COS", time: "2:30 PM", date: "Nov 2", seats: "3"),
-        Ride(destination: "BREC", time: "3:00 PM", date: "Nov 2", seats: "3"),
-        Ride(destination: "DIA", time: "2:00 PM", date: "Nov 2", seats: "3"),
-        Ride(destination: "COS", time: "2:30 PM", date: "Nov 2", seats: "3"),
-        Ride(destination: "BREC", time: "3:00 PM", date: "Nov 2", seats: "3"),
-        Ride(destination: "DIA", time: "2:00 PM", date: "Nov 2", seats: "3"),
-        Ride(destination: "COS", time: "2:30 PM", date: "Nov 2", seats: "3"),
-        Ride(destination: "BREC", time: "3:00 PM", date: "Nov 2", seats: "3")
-    ]
-    
+    @State private var rides = [Ride]()
     @State private var searchText = ""
     @State private var showingAddView = false
-    
-    init() {
-          configureNavigationBarAppearance()
-      }
-    
-    
-    var body: some View {
-          NavigationView {
-              VStack {
-                  // Search bar
-                  HStack {
-                      Image(systemName: "magnifyingglass")
-                          .foregroundColor(.darkBlue)
-                      TextField("Search Rides", text: $searchText)
-                          .textFieldStyle(RoundedBorderTextFieldStyle())
-                          .foregroundColor(.gray)
-                  }
-                  .padding()
-                  .cornerRadius(10)
-                  .padding()
-                  .shadow(radius: 10)
-                  .background(Color.white) // Search bar background color set to blue
-                  
-                  ScrollView {
-                      VStack(spacing: 10) {
-                          ForEach(rides.filter {
-                              searchText.isEmpty || $0.destination.localizedCaseInsensitiveContains(searchText)
-                          }, id: \.destination) { ride in
-                              NavigationLink(destination: OtherUserProfile()) {
-                                  RideCell(ride: ride)
-                              }
-                              .frame(maxWidth: .infinity)
-                              .background(Color.white) // Individual ride cell background color
-                              .cornerRadius(10)
-                              .shadow(radius: 5)
-                          }
-                      }
-                      .padding()
-                  }
-                  
-                  NavigationLink(destination: AddView(), isActive: $showingAddView) { EmptyView() }
-              }
-             .navigationBarTitle("Available Rides", displayMode: .automatic)
-             .navigationBarItems(trailing: addButton)
-             .background(Color.white)
-         }
-         .background(Color.blue)
-         .navigationViewStyle(StackNavigationViewStyle())
-     }
 
-      var addButton: some View {
-          Button(action: {
-              showingAddView = true
-          }) {
-              Image(systemName: "plus")
-                  .imageScale(.large)
-                  .padding()
-                  .foregroundColor(.darkBlue) // Button color changed to white for visibility
-          }
-      }
-  }
+    init() {
+        configureNavigationBarAppearance()
+        fetchRides()
+    }
+
+    var body: some View {
+        NavigationView {
+            VStack {
+                // Search bar
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(.darkBlue)
+                    TextField("Search Rides", text: $searchText)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .foregroundColor(.gray)
+                }
+                .padding()
+                .cornerRadius(10)
+                .padding()
+                .shadow(radius: 10)
+                .background(Color.white) // Search bar background color set to blue
+                
+                ScrollView {
+                    VStack(spacing: 10) {
+                        ForEach(rides.filter {
+                            searchText.isEmpty || $0.toLocation.localizedCaseInsensitiveContains(searchText)
+                        }) { ride in
+                            NavigationLink(destination: OtherUserProfile()) {
+                                RideCell(ride: ride)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .background(Color.white) // Individual ride cell background color
+                            .cornerRadius(10)
+                            .shadow(radius: 5)
+                        }
+                    }
+                    .padding()
+                }
+                
+                NavigationLink(destination: AddView(), isActive: $showingAddView) { EmptyView() }
+            }
+            .navigationBarTitle("Available Rides", displayMode: .automatic)
+            .navigationBarItems(trailing: addButton)
+            .background(Color.white)
+        }
+        .background(Color.blue)
+        .navigationViewStyle(StackNavigationViewStyle())
+    }
+
+    var addButton: some View {
+        Button(action: {
+            showingAddView = true
+        }) {
+            Image(systemName: "plus")
+                .imageScale(.large)
+                .padding()
+                .foregroundColor(.darkBlue) // Button color changed to white for visibility
+        }
+    }
+
+    // Function to fetch rides from Firebase
+    func fetchRides() {
+        let ref = Database.database().reference().child("rides")
+        ref.observe(.value) { snapshot in
+            rides.removeAll()
+            for child in snapshot.children {
+                if let snapshot = child as? DataSnapshot,
+                   let dict = snapshot.value as? [String: Any],
+                   let fromLocation = dict["fromLocation"] as? String,
+                   let toLocation = dict["toLocation"] as? String,
+                   let seats = dict["seats"] as? String,
+                   let date = dict["date"] as? String {
+                    let ride = Ride(id: snapshot.key, fromLocation: fromLocation, toLocation: toLocation, seats: seats, date: date)
+                    rides.append(ride)
+                }
+            }
+        }
+    }
+}
 
 private func configureNavigationBarAppearance() {
     let appearance = UINavigationBarAppearance()
@@ -100,51 +110,27 @@ private func configureNavigationBarAppearance() {
     UINavigationBar.appearance().scrollEdgeAppearance = appearance
 }
 
-  struct RideCell: View {
-      var ride: Ride
-      
-      var body: some View {
-          HStack {
-              VStack(alignment: .leading) {
-                  Text(ride.destination)
-                      .font(.headline)
-                      .foregroundColor(.darkBlue) // Text color changed to white for visibility
-                  Text("\(ride.date) at \(ride.time)")
-                      .font(.subheadline)
-                      .foregroundColor(.gray) // Text color changed to white for visibility
-              }
-              Spacer()
-              Text("\(ride.seats) seats")
-                  .font(.subheadline)
-                  .foregroundColor(.red) // Keep or change as per your design
-                  .shadow(radius: 5)
-          }
-          .padding()
-      }
-  }
-
-// RIDE DETAILS
-//struct RideDetailView: View {
-//    var ride: Ride
-//
-//    var body: some View {
-//        VStack {
-//            Text("Destination: \(ride.destination)")
-//                .font(.title)
-//            Text("Date: \(ride.date)")
-//            Text("Time: \(ride.time)")
-//            Text("Seats: \(ride.seats)")
-//        }.background(Color.darkBlue)
-//
-//        .navigationBarTitle("Ride Details", displayMode: .inline)
-//
-//    }
-//}
-
+struct RideCell: View {
+    var ride: Ride
+    
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading) {
+                Text(ride.toLocation)
+                    .font(.headline)
+                    .foregroundColor(.darkBlue) // Text color changed to white for visibility
+                Text("\(ride.date) - \(ride.seats) seats")
+                    .font(.subheadline)
+                    .foregroundColor(.gray) // Text color changed to white for visibility
+            }
+            Spacer()
+        }
+        .padding()
+    }
+}
 
 struct Reserve_Previews: PreviewProvider {
     static var previews: some View {
         Reserve()
     }
 }
-

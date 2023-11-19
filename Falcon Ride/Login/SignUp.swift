@@ -6,8 +6,11 @@
 //
 
 import SwiftUI
+import Firebase
+import FirebaseAuth
 
 struct SignUp: View {
+    @State private var name: String = ""
     @State private var username: String = ""
     @State private var email: String = ""
     @State private var password: String = ""
@@ -27,6 +30,18 @@ struct SignUp: View {
                     .frame(width: 80, height: 80)
                     .padding()
                 
+                // Name Field
+                TextField("Name", text: $name)
+                    .padding()
+                    .background(Color(.systemGray6))
+                    .cornerRadius(10)
+                    .padding(.horizontal, 20)
+                // Email Field
+                TextField("Email", text: $email)
+                    .padding()
+                    .background(Color(.systemGray6))
+                    .cornerRadius(10)
+                    .padding(.horizontal, 20)
                 // Username Field
                 TextField("Username", text: $username)
                     .padding()
@@ -34,12 +49,7 @@ struct SignUp: View {
                     .cornerRadius(10)
                     .padding(.horizontal, 20)
                 
-                // Email Field
-                TextField("Email", text: $email)
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(10)
-                    .padding(.horizontal, 20)
+                
                 
                 // Password Field
                 SecureField("Password", text: $password)
@@ -56,9 +66,7 @@ struct SignUp: View {
                     .padding(.horizontal, 20)
                 
                 // Sign Up Button
-                Button(action: {
-                    // Handle sign up action
-                }) {
+                Button(action: signUpUser) {
                     Text("Sign Up")
                         .fontWeight(.bold)
                         .foregroundColor(.white)
@@ -75,7 +83,37 @@ struct SignUp: View {
             .padding(.top, -100)
         }
     }
+    
+    // Function to handle user sign up
+    func signUpUser() {
+        // Validate inputs
+        guard password == confirmPassword, !username.isEmpty, !email.isEmpty, !name.isEmpty else {
+            // Handle error: Show an alert or message to the user
+            return
+        }
+        
+        // Create a new user
+        Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
+            if let error = error {
+                // Handle error: Show an alert or message to the user
+                print(error.localizedDescription)
+            } else if let userID = authResult?.user.uid {
+                // Success: Save user profile
+                DataHandler.shared.saveUserProfile(userID: userID, email: email, name: name, username: username) { error in
+                    if let error = error {
+                        // Handle error: Show an alert or message to the user
+                        print("Error saving user profile: \(error.localizedDescription)")
+                    } else {
+                        // Profile saved successfully
+                        // Navigate to the next screen or show a success message
+                    }
+                }
+            }
+        }
+    }
 }
+
+
 struct SignUp_Previews: PreviewProvider {
     static var previews: some View {
         SignUp()

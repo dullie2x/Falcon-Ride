@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct Settings: View {
     @State private var username: String = ""
@@ -13,7 +14,8 @@ struct Settings: View {
     @State private var number: String = ""
     @State private var snapchat: String = ""
     @State private var instagram: String = ""
-
+    @EnvironmentObject var authViewModel: AuthenticationViewModel
+    
     var body: some View {
         NavigationView {
             Form {
@@ -24,10 +26,10 @@ struct Settings: View {
                     SettingTextField(title: "Snapchat", text: $snapchat)
                     SettingTextField(title: "Instagram", text: $instagram)
                 }
-
+                
                 Section {
                     Button(action: {
-                        // Handle Log Out
+                        logOutUser()
                     }) {
                         Text("Log Out")
                             .foregroundColor(.red)
@@ -38,40 +40,48 @@ struct Settings: View {
             }
             .navigationBarTitle("Settings", displayMode: .inline)
             .navigationBarItems(trailing: SaveButton())
-            
+        }
+    }
+    
+    private func logOutUser() {
+        do {
+            try Auth.auth().signOut()
+            authViewModel.isUserAuthenticated = false
+        } catch let signOutError as NSError {
+            print("Error signing out: %@", signOutError)
+        }
+    }
+    
+    
+    struct SettingTextField: View {
+        var title: String
+        @Binding var text: String
+        
+        var body: some View {
+            HStack {
+                Text(title + ":")
+                    .foregroundColor(.secondary)
+                TextField(title, text: $text)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+            }
+        }
+    }
+    
+    struct SaveButton: View {
+        var body: some View {
+            Button(action: {
+                // Handle save action
+            }) {
+                Text("Save")
+                    .fontWeight(.bold)
+                    .shadow(radius: 5)
+            }
         }
     }
 }
-
-struct SettingTextField: View {
-    var title: String
-    @Binding var text: String
-
-    var body: some View {
-        HStack {
-            Text(title + ":")
-                .foregroundColor(.secondary)
-            TextField(title, text: $text)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                
+    struct Settings_Previews: PreviewProvider {
+        static var previews: some View {
+            Settings()
+                .environmentObject(AuthenticationViewModel()) // For previews
         }
     }
-}
-
-struct SaveButton: View {
-    var body: some View {
-        Button(action: {
-            // Handle save action
-        }) {
-            Text("Save")
-                .fontWeight(.bold)
-                .shadow(radius: 5)
-        }
-    }
-}
-
-struct Settings_Previews: PreviewProvider {
-    static var previews: some View {
-        Settings()
-    }
-}
