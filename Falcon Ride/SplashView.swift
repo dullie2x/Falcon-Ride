@@ -44,10 +44,15 @@ extension Color {
     static let darkBlue = Color(red: 0.1, green: 0.2, blue: 0.7)
 }
 
-struct SplashView_Previews: PreviewProvider {
+//struct SplashView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        SplashView()
+//    }
+//}
+
+struct RideCell_Previews: PreviewProvider {
     static var previews: some View {
-        SplashView()
+        RideCell(ride: Ride(id: "1", userID: "User1", fromLocation: "Location A", toLocation: "Location B", seats: "2", date: "2023-01-01", time: "12:00", donationRequested: "5"), width: 300, height: 100)
     }
 }
-
 

@@ -24,7 +24,7 @@ class DataHandler {
     }
 
     // Post a new ride to the rideReserve node
-    func postRideReserve(fromLocation: String, toLocation: String, date: String, time: String, seats: String, donation: String, additionalInfo: String, completion: @escaping (Error?) -> Void) {
+    func postRideReserve(fromLocation: String, toLocation: String, date: String, time: String, seats: String, donationRequested: String, additionalInfo: String, completion: @escaping (Error?) -> Void) {
         guard let userID = Auth.auth().currentUser?.uid else {
             completion(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "User not logged in"]))
             return
@@ -37,7 +37,7 @@ class DataHandler {
             "date": date,
             "time": time,
             "seats": seats,
-            "donation": donation,
+            "donationRequested": donationRequested,
             "additionalInfo": additionalInfo
         ]
 
@@ -48,7 +48,7 @@ class DataHandler {
     }
 
     // Post a new ride request to the rideRequest node
-    func postRideRequest(fromLocation: String, toLocation: String, date: String, time: String, seats: String, donation: String, additionalInfo: String, completion: @escaping (Error?) -> Void) {
+    func postRideRequest(fromLocation: String, toLocation: String, date: String, time: String, seats: String, donationRequested: String, additionalInfo: String, completion: @escaping (Error?) -> Void) {
         guard let userID = Auth.auth().currentUser?.uid else {
             completion(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "User not logged in"]))
             return
@@ -61,7 +61,7 @@ class DataHandler {
             "date": date,
             "time": time,
             "seats": seats,
-            "donation": donation,
+            "donationRequested": donationRequested,
             "additionalInfo": additionalInfo
         ]
 

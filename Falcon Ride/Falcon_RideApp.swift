@@ -13,7 +13,7 @@ import FirebaseAuth
 // AppDelegate to initialize Firebase
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        FirebaseConfiguration.shared.setLoggerLevel(.debug)
+        //FirebaseConfiguration.shared.setLoggerLevel(.debug)
         FirebaseApp.configure()
         return true
     }

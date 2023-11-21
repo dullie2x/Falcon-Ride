@@ -10,22 +10,27 @@ import FirebaseDatabase
 
 struct Ride: Identifiable {
     var id: String
+    var userID: String
     var fromLocation: String
     var toLocation: String
     var seats: String
     var date: String
+    var time: String
+    var donationRequested: String
+    var userEmail: String?
+    var userName: String?
 }
 
 struct Reserve: View {
     @State private var rides = [Ride]()
     @State private var searchText = ""
     @State private var showingAddView = false
-
+    
     init() {
         configureNavigationBarAppearance()
         fetchRides()
     }
-
+    
     var body: some View {
         NavigationView {
             VStack {
@@ -46,13 +51,13 @@ struct Reserve: View {
                 ScrollView {
                     VStack(spacing: 10) {
                         ForEach(rides.filter {
-                            searchText.isEmpty || $0.toLocation.localizedCaseInsensitiveContains(searchText)
+                            searchText.isEmpty || $0.fromLocation.localizedCaseInsensitiveContains(searchText) || $0.toLocation.localizedCaseInsensitiveContains(searchText)
                         }) { ride in
                             NavigationLink(destination: OtherUserProfile()) {
-                                RideCell(ride: ride)
+                                RideCell(ride: ride, width: 300, height: 100)
                             }
                             .frame(maxWidth: .infinity)
-                            .background(Color.white) // Individual ride cell background color
+                            .background(Color.white)
                             .cornerRadius(10)
                             .shadow(radius: 5)
                         }
@@ -65,11 +70,12 @@ struct Reserve: View {
             .navigationBarTitle("Available Rides", displayMode: .automatic)
             .navigationBarItems(trailing: addButton)
             .background(Color.white)
+            .onAppear(perform: fetchRides)
         }
         .background(Color.blue)
         .navigationViewStyle(StackNavigationViewStyle())
     }
-
+    
     var addButton: some View {
         Button(action: {
             showingAddView = true
@@ -80,26 +86,88 @@ struct Reserve: View {
                 .foregroundColor(.darkBlue) // Button color changed to white for visibility
         }
     }
-
+    
     // Function to fetch rides from Firebase
     func fetchRides() {
-        let ref = Database.database().reference().child("rides")
-        ref.observe(.value) { snapshot in
-            rides.removeAll()
+        let ref = Database.database().reference()
+        let ridesRef = ref.child("rideReserve")
+        let usersRef = ref.child("users")
+        
+        ridesRef.observe(.value) { snapshot in
+            var newRides: [Ride] = []
+            
+            if snapshot.childrenCount == 0 {
+                print("No rides found in Firebase.")
+                return
+            }
+            
+            let group = DispatchGroup()
+            
             for child in snapshot.children {
-                if let snapshot = child as? DataSnapshot,
-                   let dict = snapshot.value as? [String: Any],
-                   let fromLocation = dict["fromLocation"] as? String,
-                   let toLocation = dict["toLocation"] as? String,
-                   let seats = dict["seats"] as? String,
-                   let date = dict["date"] as? String {
-                    let ride = Ride(id: snapshot.key, fromLocation: fromLocation, toLocation: toLocation, seats: seats, date: date)
-                    rides.append(ride)
+                guard let snapshot = child as? DataSnapshot,
+                      let dict = snapshot.value as? [String: Any] else {
+                    print("Error: Snapshot is not a DataSnapshot or cannot be cast to [String: Any]")
+                    continue
                 }
+                
+                guard let userID = dict["userID"] as? String,
+                      let fromLocation = dict["fromLocation"] as? String,
+                      let toLocation = dict["toLocation"] as? String,
+                      let seats = dict["seats"] as? String,
+                      let dateString = dict["date"] as? String,
+                      let timeString = dict["time"] as? String,
+                      let donationRequested = dict["donationRequested"] as? String else {
+                    print("Error parsing fields in ride data: \(dict)")
+                    continue
+                }
+                
+                let formattedDate = formatDate(dateString: dateString)
+                let formattedTime = formatTime(timeString: timeString)
+                
+                group.enter()
+                usersRef.child(userID).observeSingleEvent(of: .value) { userSnapshot in
+                    var email = "", name = ""
+                    if let userDict = userSnapshot.value as? [String: Any] {
+                        email = userDict["email"] as? String ?? ""
+                        name = userDict["name"] as? String ?? ""
+                    } else {
+                        print("Error: Unable to fetch user data for userID: \(userID)")
+                    }
+                    
+                    let ride = Ride(id: snapshot.key, userID: userID, fromLocation: fromLocation, toLocation: toLocation, seats: seats, date: formattedDate, time: formattedTime, donationRequested: donationRequested, userEmail: email, userName: name)
+                    newRides.append(ride)
+                    group.leave()
+                }
+            }
+            
+            group.notify(queue: .main) {
+                self.rides = newRides.sorted { $0.date + $0.time > $1.date + $1.time }
+                print("Fetched \(newRides.count) rides.")
             }
         }
     }
 }
+    func formatDate(dateString: String) -> String {
+        let dateFormatter = ISO8601DateFormatter()
+        dateFormatter.formatOptions = [.withFullDate, .withDashSeparatorInDate]
+        if let date = dateFormatter.date(from: dateString) {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .medium
+            return formatter.string(from: date)
+        }
+        return dateString
+    }
+
+    func formatTime(timeString: String) -> String {
+        let timeFormatter = ISO8601DateFormatter()
+        timeFormatter.formatOptions = [.withTime, .withColonSeparatorInTime]
+        if let time = timeFormatter.date(from: timeString) {
+            let formatter = DateFormatter()
+            formatter.timeStyle = .short
+            return formatter.string(from: time)
+        }
+        return timeString
+    }
 
 private func configureNavigationBarAppearance() {
     let appearance = UINavigationBarAppearance()
@@ -112,22 +180,59 @@ private func configureNavigationBarAppearance() {
 
 struct RideCell: View {
     var ride: Ride
+    var width: CGFloat
+    var height: CGFloat
     
     var body: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                Text(ride.toLocation)
-                    .font(.headline)
-                    .foregroundColor(.darkBlue) // Text color changed to white for visibility
-                Text("\(ride.date) - \(ride.seats) seats")
-                    .font(.subheadline)
-                    .foregroundColor(.gray) // Text color changed to white for visibility
+        ZStack {
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color.white)
+                .shadow(radius: 5)
+            VStack(alignment: .leading, spacing: 15) { // Increased spacing
+                HStack {
+                    Image(systemName: "car.fill")
+                        .foregroundColor(.blue)
+                    Text("\(ride.fromLocation) to \(ride.toLocation)")
+                        .font(.headline)
+                        .foregroundColor(.darkBlue)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                
+                Divider() // Added a divider
+                
+                HStack {
+                    Image(systemName: "calendar")
+                        .foregroundColor(.secondary)
+                    Text("Date: \(ride.date)")
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                
+                HStack {
+                    Image(systemName: "clock")
+                        .foregroundColor(.secondary)
+                    Text("Time: \(ride.time)")
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                
+                HStack {
+                    Image(systemName: "person.3.fill")
+                        .foregroundColor(.secondary)
+                    Text("\(ride.seats) seats - Donation: \(ride.donationRequested)")
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
             }
-            Spacer()
+            .padding()
         }
-        .padding()
+        .frame(width: 400, height: 150, alignment: .leading)
     }
 }
+
 
 struct Reserve_Previews: PreviewProvider {
     static var previews: some View {
