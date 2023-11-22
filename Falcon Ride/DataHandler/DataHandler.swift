@@ -23,6 +23,21 @@ class DataHandler {
         }
     }
 
+//    func saveUserProfile(userID: String, email: String, name: String, username: String, phoneNumber: String?, snapchat: String?, instagram: String?, profilePictureURL: String?, completion: @escaping (Error?) -> Void) {
+//        let userRef = Database.database().reference().child("users").child(userID)
+//        let userData = [
+//            "email": email,
+//            "name": name,
+//            "username": username,
+//            "phoneNumber": phoneNumber,
+//            "socialMedia": ["snapchat": snapchat, "instagram": instagram],
+//            "profilePictureURL": profilePictureURL
+//        ] as [String: Any]
+//        userRef.updateChildValues(userData) { error, _ in
+//            completion(error)
+//        }
+//    }
+    
     // Post a new ride to the rideReserve node
     func postRideReserve(fromLocation: String, toLocation: String, date: String, time: String, seats: String, donationRequested: String, additionalInfo: String, completion: @escaping (Error?) -> Void) {
         guard let userID = Auth.auth().currentUser?.uid else {
