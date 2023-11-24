@@ -29,8 +29,8 @@ struct OtherUserProfile: View {
                 }
                 
                 Stepper("Number of Seats: \(viewModel.numberOfSeatsToBook)", value: $viewModel.numberOfSeatsToBook, in: 1...10)
-                    .padding(50) // Add padding to the top and sides
-
+                    .padding(50)
+                
                 if viewModel.showError {
                     Text(viewModel.alertMessage)
                         .foregroundColor(.red)
@@ -52,12 +52,24 @@ struct OtherUserProfile: View {
                 .shadow(radius: 5)
                 .disabled(viewModel.isLoading)
             }
-            .padding() // You may adjust this padding to increase/decrease overall padding
+            .padding()
             .background(Color.white)
             .onAppear { viewModel.fetchOtherUserData(rideInfo: rideInfo) }
             .alert(isPresented: $viewModel.showingAlert) {
                 Alert(title: Text(viewModel.alertMessage))
             }
+        }
+        .alert(isPresented: $viewModel.shouldPromptForMessage) {
+            Alert(
+                title: Text("Ride Booked Successfully"),
+                message: Text("Would you like to message the driver now?"),
+                primaryButton: .default(Text("Yes"), action: {
+                    if let url = viewModel.messageDriverURL(phoneNumber: viewModel.userNumber, message: "Hello, I've just booked a ride with you/accepted a request from you.") {
+                        UIApplication.shared.open(url)
+                    }
+                }),
+                secondaryButton: .cancel()
+            )
         }
     }
 }
@@ -72,7 +84,7 @@ struct OtherProfileHeaderView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(name)
-                .font(.system(size: 30, weight: .bold, design: .rounded)) // Slightly larger font
+                .font(.system(size: 30, weight: .bold, design: .rounded))
                 .foregroundColor(Color.darkBlue)
             
             Text("@\(username)")
@@ -87,7 +99,7 @@ struct OtherProfileHeaderView: View {
         }
         .padding()
         .frame(width: width, height: height)
-        .background(LinearGradient(gradient: Gradient(colors: [Color.white, Color.blue.opacity(0.3)]), startPoint: .top, endPoint: .bottom)) // Adjust gradient colors
+        .background(LinearGradient(gradient: Gradient(colors: [Color.white, Color.blue.opacity(0.3)]), startPoint: .top, endPoint: .bottom))
         .cornerRadius(15)
         .shadow(color: Color.gray.opacity(0.4), radius: 5, x: 0, y: 2)
         .padding(.horizontal)
@@ -103,6 +115,13 @@ class OtherUserProfileViewModel: ObservableObject {
     @Published var alertMessage = ""
     @Published var isLoading = false
     @Published var showError = false
+    @Published var shouldPromptForMessage = false
+    
+    func messageDriverURL(phoneNumber: String, message: String) -> URL? {
+        let formattedNumber = phoneNumber.replacingOccurrences(of: " ", with: "")
+        let formattedMessage = message.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
+        return URL(string: "sms:\(formattedNumber)&body=\(formattedMessage ?? "")")
+    }
     
     func fetchOtherUserData(rideInfo: RideInfo) {
         isLoading = true
@@ -128,6 +147,7 @@ class OtherUserProfileViewModel: ObservableObject {
                 self.userUsername = value["username"] as? String ?? "Unknown"
                 self.userNumber = value["number"] as? String ?? "Unknown"
                 self.isLoading = false
+                
             }
         }) { [weak self] error in
             self?.isLoading = false
@@ -175,8 +195,8 @@ class OtherUserProfileViewModel: ObservableObject {
                     self.alertMessage = "Error: \(error.localizedDescription)"
                     self.showingAlert = true
                 } else if committed {
-                    self.alertMessage = "Seats booked successfully."
-                    self.showingAlert = true
+                    // Trigger the message prompt only after successful booking
+                    self.shouldPromptForMessage = true
                 }
                 self.isLoading = false
             }
@@ -192,25 +212,3 @@ class OtherUserProfileViewModel: ObservableObject {
         }
     }
 }
-
-//struct OtherUserProfile_Previews: PreviewProvider {
-//    static var previews: some View {
-//        // Create a mock Ride object
-//        let mockRide = RideInfo(
-//            id: "mockRideId",
-//            userID: "mockUserId",
-//            fromLocation: "New York",
-//            toLocation: "Washington D.C.",
-//            seats: "3",
-//            date: "2023-12-15",
-//            time: "08:00",
-//            donationRequested: "20",
-//            userEmail: "example@example.com",
-//            userName: "John Doe",
-//            userUsername: "johndoe123",
-//            userNumber: "123-456-7890"
-//        )
-//
-//        OtherUserProfile(RideInfo: mockRide)
-//    }
-//}
