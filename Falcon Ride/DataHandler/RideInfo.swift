@@ -6,3 +6,8 @@
 //
 
 import Foundation
+
+enum RideInfo {
+    case reserve(Ride)
+    case request(Ride2)
+}

@@ -6,127 +6,112 @@
 //
 
 import SwiftUI
+import FirebaseDatabase
+import FirebaseAuth
 
 struct MyProfile: View {
-    @State private var navigateToSettings = false // State for controlling navigation to Settings view
+    @State private var navigateToSettings = false
+    @State private var userName = "Loading..."
+    @State private var userUsername = "Loading..."
+    @State private var userNumber = "Loading..."
+
+    // Fetch user data
+    private func fetchUserData() {
+        guard let userID = Auth.auth().currentUser?.uid else {
+            print("User not logged in")
+            return
+        }
+
+        let userRef = Database.database().reference().child("users").child(userID)
+
+        userRef.observeSingleEvent(of: .value, with: { snapshot in
+            guard let value = snapshot.value as? [String: AnyObject] else {
+                print("No user data found")
+                return
+            }
+
+            let name = value["name"] as? String ?? "Unknown"
+            let username = value["username"] as? String ?? "Unknown"
+            let number = value["number"] as? String ?? "Unknown"
+
+            DispatchQueue.main.async {
+                self.userName = name
+                self.userUsername = username
+                self.userNumber = number
+            }
+        }) { error in
+            print("Error fetching user data: \(error.localizedDescription)")
+        }
+    }
 
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(alignment: .leading) {
-                    ProfileHeaderView()
+                    ProfileHeaderView(name: userName, username: userUsername, number: userNumber, width: 400, height: 200)
                         .shadow(radius: 10)
                         .padding()
-
-                    SectionHeaderView(title: "Reservations")
-                        .padding(.horizontal, 16)
-                        .shadow(radius: 5)
-                    ReservationView(destination: "DIA", date: "November 20, 2023")
-                        .padding(.horizontal)
-                        .shadow(radius: 5)
-                    ReservationView(destination: "BREC", date: "November 22, 2023")
-                        .padding(.horizontal)
-                        .shadow(radius: 5)
-
-                    SectionHeaderView(title: "Requests")
-                        .padding(.horizontal, 16)
-                        .shadow(radius: 5)
-                    RequestView(destination: "COS", date: "November 25, 2023")
-                        .padding(.horizontal)
-                        .shadow(radius: 5)
-                    RequestView(destination: "DIA", date: "November 30, 2023")
-                        .padding(.horizontal)
-                        .shadow(radius: 5)
                 }
                 .padding()
 
-                // Invisible NavigationLink for programmatic navigation
                 NavigationLink(destination: Settings(), isActive: $navigateToSettings) { EmptyView() }
             }
             .navigationBarTitle("My Profile", displayMode: .inline)
             .navigationBarItems(trailing: SettingsButton(action: { navigateToSettings = true }))
             .background(LinearGradient(gradient: Gradient(colors: [Color.white, Color.gray.opacity(0.2)]), startPoint: .top, endPoint: .bottom))
+            .onAppear(perform: fetchUserData)
         }
     }
 }
 
 struct ProfileHeaderView: View {
-    var body: some View {
-        HStack {
-            Image("logo1png") // Replace with the actual image
-                .resizable()
-                .scaledToFit()
-                .frame(width: 120, height: 120)
-                .clipShape(Circle())
-                .shadow(radius: 5)
-                .padding(.trailing, 16)
+    var name: String
+    var username: String
+    var number: String
+    var width: CGFloat
+    var height: CGFloat
 
-            VStack(alignment: .leading, spacing: 8) {
-                Text("User 1").font(.title)
-                Text("user1@user.com")
-                Text("404-643-9730")
-                Text("Snapchat: usER1_")
-                Text("Instagram: usER1_")
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // Name
+            Text(name)
+                .font(.system(size: 28, weight: .bold, design: .rounded))
+                .foregroundColor(Color.black)
+
+            // Username
+            Text("@\(username)")
+                .font(.system(size: 22, weight: .medium, design: .rounded))
+                .foregroundColor(Color.darkBlue)
+
+            // Number
+            Text(number)
+                .font(.system(size: 20, weight: .regular, design: .rounded))
+                .foregroundColor(Color.black)
+
+            // Stylish Divider
+            Divider().background(Color.darkBlue)
+
+            // Additional User Info or Actions
+            HStack {
+                Spacer()
+                Button(action: /* Action for Edit */ {}) {
+                    Label("Edit Profile", systemImage: "pencil")
+                }
+                .buttonStyle(BorderlessButtonStyle())
+                Spacer()
             }
-        }
-    }
-}
-
-struct SectionHeaderView: View {
-    var title: String
-    
-    var body: some View {
-        Text(title)
-            .font(.headline)
-            .fontWeight(.bold)
-            .padding(.vertical, 8)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color.blue.opacity(0.1))
-            .cornerRadius(10)
-            .padding(.top, 10)
-    }
-}
-
-// Define ReservationView, RequestView, SettingsButton as per your design
-
-
-struct ReservationView: View {
-    var destination: String
-    var date: String
-    
-    var body: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                Text("Destination: \(destination)")
-                Text("Date: \(date)")
-            }
-            Spacer()
         }
         .padding()
-        .background(Color(.systemGray6))
-        .cornerRadius(8)
-        .padding(.bottom, 10)
+        .frame(width: width, height: height)
+        .background(LinearGradient(gradient: Gradient(colors: [Color.white, Color.gray.opacity(0.3)]), startPoint: .top, endPoint: .bottom))
+        .cornerRadius(15)
+        .shadow(color: Color.gray.opacity(0.4), radius: 5, x: 0, y: 2)
+        .padding(.horizontal)
     }
 }
 
-struct RequestView: View {
-    var destination: String
-    var date: String
 
-    var body: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                Text("Destination: \(destination)")
-                Text("Date: \(date)")
-            }
-            Spacer()
-        }
-        .padding()
-        .background(Color(.systemGray6))
-        .cornerRadius(8)
-        .padding(.bottom, 10)
-    }
-}
+
 
 struct SettingsButton: View {
     var action: () -> Void
@@ -144,4 +129,3 @@ struct MyProfile_Previews: PreviewProvider {
         MyProfile()
     }
 }
-

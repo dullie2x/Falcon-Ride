@@ -15,28 +15,13 @@ class DataHandler {
     private init() {}
 
     // Save or update user profile
-    func saveUserProfile(userID: String, email: String, name: String, username: String, completion: @escaping (Error?) -> Void) {
+    func saveUserProfile(userID: String, email: String, name: String, number: String?, username: String, completion: @escaping (Error?) -> Void) {
         let userRef = Database.database().reference().child("users").child(userID)
-        let userData = ["email": email, "name": name, "username": username]
+        let userData = ["email": email, "name": name, "username": username, "number": number]
         userRef.setValue(userData) { error, _ in
             completion(error)
         }
     }
-
-//    func saveUserProfile(userID: String, email: String, name: String, username: String, phoneNumber: String?, snapchat: String?, instagram: String?, profilePictureURL: String?, completion: @escaping (Error?) -> Void) {
-//        let userRef = Database.database().reference().child("users").child(userID)
-//        let userData = [
-//            "email": email,
-//            "name": name,
-//            "username": username,
-//            "phoneNumber": phoneNumber,
-//            "socialMedia": ["snapchat": snapchat, "instagram": instagram],
-//            "profilePictureURL": profilePictureURL
-//        ] as [String: Any]
-//        userRef.updateChildValues(userData) { error, _ in
-//            completion(error)
-//        }
-//    }
     
     // Post a new ride to the rideReserve node
     func postRideReserve(fromLocation: String, toLocation: String, date: String, time: String, seats: String, donationRequested: String, additionalInfo: String, completion: @escaping (Error?) -> Void) {
@@ -86,3 +71,11 @@ class DataHandler {
         }
     }
 }
+
+func deleteRide(rideId: String, node: String, completion: @escaping (Error?) -> Void) {
+    let ref = Database.database().reference().child(node).child(rideId)
+    ref.removeValue { error, _ in
+        completion(error)
+    }
+}
+

@@ -13,6 +13,7 @@ struct SignUp: View {
     @State private var name: String = ""
     @State private var username: String = ""
     @State private var email: String = ""
+    @State private var number: String = ""
     @State private var password: String = ""
     @State private var confirmPassword: String = ""
     
@@ -29,9 +30,8 @@ struct SignUp: View {
                     .scaledToFit()
                     .frame(width: 80, height: 80)
                     .padding()
-                
                 // Name Field
-                TextField("Name", text: $name)
+                TextField("First Name", text: $name)
                     .padding()
                     .background(Color(.systemGray6))
                     .cornerRadius(10)
@@ -48,9 +48,13 @@ struct SignUp: View {
                     .background(Color(.systemGray6))
                     .cornerRadius(10)
                     .padding(.horizontal, 20)
-                
-                
-                
+                // Password Field
+                TextField("Phone Number", text: $number)
+                    .keyboardType(.numberPad)
+                    .padding()
+                    .background(Color(.systemGray6))
+                    .cornerRadius(10)
+                    .padding(.horizontal, 20)
                 // Password Field
                 SecureField("Password", text: $password)
                     .padding()
@@ -87,7 +91,7 @@ struct SignUp: View {
     // Function to handle user sign up
     func signUpUser() {
         // Validate inputs
-        guard password == confirmPassword, !username.isEmpty, !email.isEmpty, !name.isEmpty else {
+        guard password == confirmPassword, !username.isEmpty, !email.isEmpty, !name.isEmpty,!number.isEmpty else {
             // Handle error: Show an alert or message to the user
             return
         }
@@ -99,7 +103,7 @@ struct SignUp: View {
                 print(error.localizedDescription)
             } else if let userID = authResult?.user.uid {
                 // Success: Save user profile
-                DataHandler.shared.saveUserProfile(userID: userID, email: email, name: name, username: username) { error in
+                DataHandler.shared.saveUserProfile(userID: userID, email: email, name: name, number: number, username: username) { error in
                     if let error = error {
                         // Handle error: Show an alert or message to the user
                         print("Error saving user profile: \(error.localizedDescription)")

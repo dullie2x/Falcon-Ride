@@ -6,154 +6,211 @@
 //
 
 import SwiftUI
-
-struct OtherUserProfileReservation: Hashable {
-    var destination: String
-    var date: String
-    var status: String
-}
-
-struct OtherUserProfileRequest: Hashable {
-    var destination: String
-    var date: String
-}
+import FirebaseDatabase
+import FirebaseAuth
 
 struct OtherUserProfile: View {
-    let reservations = [
-        OtherUserProfileReservation(destination: "Airport", date: "November 20, 2023", status: "Confirmed"),
-        OtherUserProfileReservation(destination: "Downtown", date: "November 22, 2023", status: "Pending")
-    ]
-    let requests = [
-        OtherUserProfileRequest(destination: "Shopping Mall", date: "November 25, 2023"),
-        OtherUserProfileRequest(destination: "Restaurant", date: "November 30, 2023")
-    ]
-
-    @State private var selectedReservations = Set<OtherUserProfileReservation>()
-    @State private var selectedRequests = Set<OtherUserProfileRequest>()
+    var rideInfo: RideInfo // Using RideInfo enum
+    @StateObject private var viewModel = OtherUserProfileViewModel()
     
     var body: some View {
-           ScrollView {
-               VStack(alignment: .leading) {
-                   OtherProfileHeaderView()
-                       .shadow(radius: 10)
-                       .padding()
-
-                   SectionHeaderView(title: "Available Rides")
-                       .padding(.horizontal, 16) // Moving title away from the edge
-                       .shadow(radius: 5)
-                   ForEach(reservations, id: \.self) { reservation in
-                       ReservationView(destination: reservation.destination, date: reservation.date)
-                           .background(selectedReservations.contains(reservation) ? Color.blue.opacity(0.2) : Color.clear)
-                           .cornerRadius(10)
-                           .shadow(radius: 5)
-                           .onTapGesture { toggleSelection(reservation) }
-                           .padding(.horizontal)
-                   }
-
-                   SectionHeaderView(title: "Current Requests")
-                       .padding(.horizontal, 16) // Moving title away from the edge
-                       .shadow(radius: 5)
-                   ForEach(requests, id: \.self) { request in
-                       RequestView(destination: request.destination, date: request.date)
-                           .background(selectedRequests.contains(request) ? Color.green.opacity(0.2) : Color.clear)
-                           .cornerRadius(10)
-                           .shadow(radius: 5)
-                           .onTapGesture { toggleSelection(request) }
-                           .padding(.horizontal)
-                   }
-               }
-
-               ConfirmButton(selectedReservations: $selectedReservations, selectedRequests: $selectedRequests)
-                   .shadow(radius: 10)
-                   .padding()
-           }
-           .background(LinearGradient(gradient: Gradient(colors: [Color.white, Color.gray.opacity(0.2)]), startPoint: .top, endPoint: .bottom))
-       }
-
-       private func toggleSelection(_ reservation: OtherUserProfileReservation) {
-           if selectedReservations.contains(reservation) {
-               selectedReservations.remove(reservation)
-           } else {
-               selectedReservations.insert(reservation)
-           }
-       }
-
-       private func toggleSelection(_ request: OtherUserProfileRequest) {
-           if selectedRequests.contains(request) {
-               selectedRequests.remove(request)
-           } else {
-               selectedRequests.insert(request)
-           }
-       }
-   }
-
-    // Redefine SectionHeaderView with a more modern look
-    struct SectionHeaderView2: View {
-        var title: String
-        
-        var body: some View {
-            Text(title)
-                .font(.headline)
-                .fontWeight(.bold)
-                .padding(.vertical, 8)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color.blue.opacity(0.1))
-                .cornerRadius(10)
-                .padding(.top, 10)
-        }
-    }
-
-    // Redefine ConfirmButton with a more pronounced and aesthetic design
-    struct ConfirmButton: View {
-        @Binding var selectedReservations: Set<OtherUserProfileReservation>
-        @Binding var selectedRequests: Set<OtherUserProfileRequest>
-
-        var body: some View {
-            Button(action: {
-                // Handle confirmation action
-                print("Confirmed Reservations: \(selectedReservations)")
-                print("Confirmed Requests: \(selectedRequests)")
-            }) {
-                HStack {
-                    Image(systemName: "paperplane.fill")
-                        .font(.system(size: 24)) // Adjust the size of the image
-                    Text("Confirm Selection")
-                        .fontWeight(.bold)
-                        .font(.system(size: 20))
+        ScrollView {
+            VStack {
+                Spacer()
+                
+                if viewModel.isLoading {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: Color.darkBlue))
+                        .scaleEffect(1.5)
+                } else {
+                    OtherProfileHeaderView(name: viewModel.userName, username: viewModel.userUsername, number: viewModel.userNumber, width: 400, height: 200)
+                        .shadow(radius: 10)
+                        .padding()
                 }
-                .padding()
-                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50)
-                .background(Color.blue)
-                .foregroundColor(.white)
-                .cornerRadius(20)
+                
+                Stepper("Number of Seats: \(viewModel.numberOfSeatsToBook)", value: $viewModel.numberOfSeatsToBook, in: 1...10)
+                    .padding(50) // Add padding to the top and sides
+
+                if viewModel.showError {
+                    Text(viewModel.alertMessage)
+                        .foregroundColor(.red)
+                        .padding()
+                }
+                
+                Button(action: {
+                    viewModel.confirmBooking(rideInfo: rideInfo)
+                }) {
+                    Text("Confirm Booking")
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                        .frame(minWidth: 0, maxWidth: 200, minHeight: 50)
+                        .background(Color.darkBlue)
+                        .cornerRadius(15)
+                        .padding(.horizontal)
+                }
+                .shadow(radius: 5)
+                .disabled(viewModel.isLoading)
+            }
+            .padding() // You may adjust this padding to increase/decrease overall padding
+            .background(Color.white)
+            .onAppear { viewModel.fetchOtherUserData(rideInfo: rideInfo) }
+            .alert(isPresented: $viewModel.showingAlert) {
+                Alert(title: Text(viewModel.alertMessage))
             }
         }
     }
+}
 
 struct OtherProfileHeaderView: View {
+    var name: String
+    var username: String
+    var number: String
+    var width: CGFloat
+    var height: CGFloat
+    
     var body: some View {
-        HStack {
-            Image("profilepic1") // Replace with the actual image
-                .resizable()
-                .scaledToFit()
-                .frame(width: 120, height: 120)
-                .clipShape(Circle())
-                .padding(.trailing, 16)
+        VStack(alignment: .leading, spacing: 12) {
+            Text(name)
+                .font(.system(size: 30, weight: .bold, design: .rounded)) // Slightly larger font
+                .foregroundColor(Color.darkBlue)
+            
+            Text("@\(username)")
+                .font(.system(size: 22, weight: .medium, design: .rounded))
+                .foregroundColor(Color.darkBlue)
+            
+            Text(number)
+                .font(.system(size: 20, weight: .regular, design: .rounded))
+                .foregroundColor(Color.black)
+            
+            Divider().background(Color.darkBlue)
+        }
+        .padding()
+        .frame(width: width, height: height)
+        .background(LinearGradient(gradient: Gradient(colors: [Color.white, Color.blue.opacity(0.3)]), startPoint: .top, endPoint: .bottom)) // Adjust gradient colors
+        .cornerRadius(15)
+        .shadow(color: Color.gray.opacity(0.4), radius: 5, x: 0, y: 2)
+        .padding(.horizontal)
+    }
+}
 
-            VStack(alignment: .leading, spacing: 8) {
-                Text("User 2").font(.title)
-                Text("user2@user.com")
-                Text("404-643-9730")
-                Text("Snapchat: usER2_")
-                Text("Instagram: usER2_")
+class OtherUserProfileViewModel: ObservableObject {
+    @Published var numberOfSeatsToBook = 1
+    @Published var userName = "Loading..."
+    @Published var userUsername = "Loading..."
+    @Published var userNumber = "Loading..."
+    @Published var showingAlert = false
+    @Published var alertMessage = ""
+    @Published var isLoading = false
+    @Published var showError = false
+    
+    func fetchOtherUserData(rideInfo: RideInfo) {
+        isLoading = true
+        let userID: String
+        switch rideInfo {
+        case .reserve(let ride):
+            userID = ride.userID
+        case .request(let ride2):
+            userID = ride2.userID
+        }
+        
+        let userRef = Database.database().reference().child("users").child(userID)
+        userRef.observeSingleEvent(of: .value, with: { [weak self] snapshot in
+            guard let self = self else { return }
+            guard let value = snapshot.value as? [String: AnyObject] else {
+                self.alertMessage = "No user data found"
+                self.showError = true
+                self.isLoading = false
+                return
             }
+            DispatchQueue.main.async {
+                self.userName = value["name"] as? String ?? "Unknown"
+                self.userUsername = value["username"] as? String ?? "Unknown"
+                self.userNumber = value["number"] as? String ?? "Unknown"
+                self.isLoading = false
+            }
+        }) { [weak self] error in
+            self?.isLoading = false
+            self?.alertMessage = "Error fetching user data: \(error.localizedDescription)"
+            self?.showingAlert = true
+        }
+    }
+    
+    func confirmBooking(rideInfo: RideInfo) {
+        guard numberOfSeatsToBook > 0 else {
+            alertMessage = "Please enter a valid number of seats."
+            showingAlert = true
+            return
+        }
+        bookSeats(numberOfSeats: numberOfSeatsToBook, rideInfo: rideInfo)
+    }
+    
+    
+    func bookSeats(numberOfSeats: Int, rideInfo: RideInfo) {
+        isLoading = true
+        let (rideId, firebaseNode) = getRideDetails(rideInfo: rideInfo)
+        let rideRef = Database.database().reference().child(firebaseNode).child(rideId)
+        
+        rideRef.runTransactionBlock({ [weak self] (currentData: MutableData) -> TransactionResult in
+            guard let self = self else { return .abort() }
+            if var rideData = currentData.value as? [String: AnyObject], let availableSeats = Int(rideData["seats"] as? String ?? "0") {
+                if numberOfSeats <= availableSeats {
+                    rideData["seats"] = String(availableSeats - numberOfSeats) as AnyObject
+                    currentData.value = rideData
+                    return .success(withValue: currentData)
+                } else {
+                    DispatchQueue.main.async {
+                        self.alertMessage = "Not enough seats available."
+                        self.showingAlert = true
+                        self.isLoading = false
+                    }
+                    return .abort()
+                }
+            }
+            return .abort()
+        }, andCompletionBlock: { [weak self] error, committed, _ in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                if let error = error {
+                    self.alertMessage = "Error: \(error.localizedDescription)"
+                    self.showingAlert = true
+                } else if committed {
+                    self.alertMessage = "Seats booked successfully."
+                    self.showingAlert = true
+                }
+                self.isLoading = false
+            }
+        })
+    }
+    
+    private func getRideDetails(rideInfo: RideInfo) -> (rideId: String, firebaseNode: String) {
+        switch rideInfo {
+        case .reserve(let ride):
+            return (ride.id, "rideReserve")
+        case .request(let ride2):
+            return (ride2.id, "rideRequest")
         }
     }
 }
 
-struct OtherUserProfile_Previews: PreviewProvider {
-    static var previews: some View {
-        OtherUserProfile()
-    }
-}
-
+//struct OtherUserProfile_Previews: PreviewProvider {
+//    static var previews: some View {
+//        // Create a mock Ride object
+//        let mockRide = RideInfo(
+//            id: "mockRideId",
+//            userID: "mockUserId",
+//            fromLocation: "New York",
+//            toLocation: "Washington D.C.",
+//            seats: "3",
+//            date: "2023-12-15",
+//            time: "08:00",
+//            donationRequested: "20",
+//            userEmail: "example@example.com",
+//            userName: "John Doe",
+//            userUsername: "johndoe123",
+//            userNumber: "123-456-7890"
+//        )
+//
+//        OtherUserProfile(RideInfo: mockRide)
+//    }
+//}

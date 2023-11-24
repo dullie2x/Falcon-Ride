@@ -31,17 +31,12 @@ struct Login: View {
                 VStack {
                     Spacer()
                     
-//                    // Logo Animation
-//                    Image("logo1png") // Replace with your actual logo asset name
-//                        .resizable()
-//                        .scaledToFit()
-//                        .frame(width: 80, height: 80)
-//                        .padding()
-//                        .offset(x: logoOffset, y: 0)
-//                        .animation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true), value: logoOffset)
-//                        .onAppear {
-//                            logoOffset = 100
-//                        }
+                    // Logo Animation
+                    Image("logo1png")  // Replace with your logo
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 80, height: 80)
+                        .padding()
                     
                     VStack(spacing: 15) {
                         // Username Field

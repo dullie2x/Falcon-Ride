@@ -7,6 +7,7 @@
 
 import SwiftUI
 import FirebaseDatabase
+import FirebaseAuth
 
 struct Ride2: Identifiable {
     var id: String
@@ -19,12 +20,16 @@ struct Ride2: Identifiable {
     var donationRequested: String
     var userEmail: String?
     var userName: String?
+    var userUsername: String?
+    var userNumber: String?
 }
 
 struct Request: View {
     @State private var rides2 = [Ride2]()
     @State private var searchText = ""
     @State private var showingAddRequestView = false
+    @State private var isLoading2 = true
+    
     
     init() {
         configureNavigationBarAppearance()
@@ -50,16 +55,31 @@ struct Request: View {
                 
                 ScrollView {
                     VStack(spacing: 10) {
-                        ForEach(rides2.filter {
-                            searchText.isEmpty || $0.fromLocation.localizedCaseInsensitiveContains(searchText) || $0.toLocation.localizedCaseInsensitiveContains(searchText)
-                        }) { ride2 in
-                            NavigationLink(destination: OtherUserProfile()) {
-                                RideCell2(ride2: ride2, width: 300, height: 100)
+                        if isLoading2 {
+                            ForEach(0..<5, id: \.self) { _ in
+                                RideCellSkeleton2(width: 400, height: 200)
+                                    .frame(maxWidth: .infinity)
+                                    .background(Color.gray.opacity(0.3))
+                                    .cornerRadius(10)
+                                    .shadow(radius: 5)
                             }
-                            .frame(maxWidth: .infinity)
-                            .background(Color.white)
-                            .cornerRadius(10)
-                            .shadow(radius: 5)
+                        } else {
+                            ForEach(rides2.filter {
+                                searchText.isEmpty || $0.fromLocation.localizedCaseInsensitiveContains(searchText) || $0.toLocation.localizedCaseInsensitiveContains(searchText)
+                            }) { ride2 in
+                                NavigationLink(destination: OtherUserProfile(rideInfo: .request(ride2))) {
+                                    RideCell2(ride2: ride2, width: 300, height: 100, onDelete: { selectedRide in
+                                        // Deletion logic goes here
+                                        DataHandler.shared.deleteRide(rideId: selectedRide.id, node: "rideRequest") { error in
+                                            // Handle error or success
+                                        }
+                                    })
+                                }
+                                .frame(maxWidth: .infinity)
+                                .background(Color.white)
+                                .cornerRadius(10)
+                                .shadow(radius: 5)
+                            }
                         }
                     }
                     .padding()
@@ -89,63 +109,72 @@ struct Request: View {
     
     // Function to fetch rides from Firebase
     func fetchRides2() {
+        let currentUserID = Auth.auth().currentUser?.uid
         let ref = Database.database().reference()
-        let ridesRef = ref.child("rideRequest")
+        let ridesRef = ref.child("rideReserve")
         let usersRef = ref.child("users")
         
         ridesRef.observe(.value) { snapshot in
             var newRides2: [Ride2] = []
-            
+
             if snapshot.childrenCount == 0 {
                 print("No rides found in Firebase.")
+                self.isLoading2 = false
                 return
             }
-            
+
             let group = DispatchGroup()
-            
+
             for child in snapshot.children {
                 guard let snapshot = child as? DataSnapshot,
-                      let dict = snapshot.value as? [String: Any] else {
-                    print("Error: Snapshot is not a DataSnapshot or cannot be cast to [String: Any]")
+                      let dict = snapshot.value as? [String: Any],
+                      let userID = dict["userID"] as? String else {
+                    print("Error parsing fields in ride data")
                     continue
                 }
-                
-                guard let userID = dict["userID"] as? String,
-                      let fromLocation = dict["fromLocation"] as? String,
-                      let toLocation = dict["toLocation"] as? String,
-                      let seats = dict["seats"] as? String,
-                      let dateString = dict["date"] as? String,
-                      let timeString = dict["time"] as? String,
-                      let donationRequested = dict["donationRequested"] as? String else {
-                    print("Error parsing fields in ride data: \(dict)")
-                    continue
-                }
-                
-                let formattedDate = formatDate(dateString: dateString)
-                let formattedTime = formatTime(timeString: timeString)
-                
-                group.enter()
-                usersRef.child(userID).observeSingleEvent(of: .value) { userSnapshot in
-                    var email = "", name = ""
-                    if let userDict = userSnapshot.value as? [String: Any] {
-                        email = userDict["email"] as? String ?? ""
-                        name = userDict["name"] as? String ?? ""
-                    } else {
-                        print("Error: Unable to fetch user data for userID: \(userID)")
+
+                // Only add rides posted by the current user
+                if currentUserID == userID {
+                    guard let fromLocation = dict["fromLocation"] as? String,
+                          let toLocation = dict["toLocation"] as? String,
+                          let seats = dict["seats"] as? String,
+                          let dateString = dict["date"] as? String,
+                          let timeString = dict["time"] as? String,
+                          let donationRequested = dict["donationRequested"] as? String else {
+                        print("Error parsing fields in ride data")
+                        continue
                     }
-                    
-                    let ride2 = Ride2(id: snapshot.key, userID: userID, fromLocation: fromLocation, toLocation: toLocation, seats: seats, date: formattedDate, time: formattedTime, donationRequested: donationRequested, userEmail: email, userName: name)
-                    newRides2.append(ride2)
-                    group.leave()
+
+                    let formattedDate = formatDate(dateString: dateString)
+                    let formattedTime = formatTime(timeString: timeString)
+
+                    group.enter()
+                    usersRef.child(userID).observeSingleEvent(of: .value) { userSnapshot in
+                        var email = "", name = "", username = "", number = ""
+                        if let userDict = userSnapshot.value as? [String: Any] {
+                            email = userDict["email"] as? String ?? ""
+                            name = userDict["name"] as? String ?? ""
+                            username = userDict["username"] as? String ?? ""
+                            number = userDict["number"] as? String ?? ""
+                        } else {
+                            print("Error: Unable to fetch user data for userID: \(userID)")
+                        }
+                        
+                        let ride2 = Ride2(id: snapshot.key, userID: userID, fromLocation: fromLocation, toLocation: toLocation, seats: seats, date: formattedDate, time: formattedTime, donationRequested: donationRequested, userEmail: email, userName: name, userUsername: username, userNumber: number)
+                        newRides2.append(ride2)
+                        group.leave()
+                    }
                 }
             }
-            
+
             group.notify(queue: .main) {
                 self.rides2 = newRides2.sorted { $0.date + $0.time > $1.date + $1.time }
-                print("Fetched \(newRides2.count) requests.")
+                self.isLoading2 = false
+                print("Fetched \(newRides2.count) rides.")
             }
         }
     }
+
 }
 
 private func configureNavigationBarAppearance() {
@@ -161,13 +190,14 @@ struct RideCell2: View {
     var ride2: Ride2
     var width: CGFloat
     var height: CGFloat
-    
+    var onDelete: (Ride2) -> Void  // Closure to handle deletion
+
     var body: some View {
-        ZStack {
+        ZStack(alignment: .bottomTrailing) { // Align the delete button to the bottom trailing corner
             RoundedRectangle(cornerRadius: 10)
                 .fill(Color.white)
                 .shadow(radius: 5)
-            VStack(alignment: .leading, spacing: 15) { // Increased spacing
+            VStack(alignment: .leading, spacing: 15) {
                 HStack {
                     Image(systemName: "car.fill")
                         .foregroundColor(.blue)
@@ -177,7 +207,7 @@ struct RideCell2: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 
-                Divider() // Added a divider
+                Divider()
                 
                 HStack {
                     Image(systemName: "calendar")
@@ -205,14 +235,68 @@ struct RideCell2: View {
                         .foregroundColor(.gray)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
+                Text("Posted by: \(ride2.userUsername ?? "Unknown")")
+                    .font(.footnote)
+                    .foregroundColor(.darkBlue)
+                    .padding(.top, 2)
             }
             .padding()
+
+            if ride2.userID == Auth.auth().currentUser?.uid {
+                Button(action: { onDelete(ride2) }) {
+                    Image(systemName: "trash")
+                        .foregroundColor(.white)
+                        .padding(10)
+                        .background(Color.red)
+                        .clipShape(Circle())
+                }
+                .padding() // Add padding to position the button inside the cell's corner
+            }
         }
-        .frame(width: 400, height: 150, alignment: .leading)
+        .frame(width: width, height: height, alignment: .leading)
     }
 }
 
 
+struct RideCellSkeleton2: View {
+    var width: CGFloat
+    var height: CGFloat
+    
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color(red: 0.85, green: 0.85, blue: 0.85)) // Custom light gray color
+                .shadow(radius: 5)
+            
+            
+            VStack(alignment: .leading, spacing: 15) {
+                HStack {
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(Color(red: 0.85, green: 0.85, blue: 0.85))
+                        .frame(width: 30, height: 30)
+                    Rectangle()
+                        .fill(Color(red: 0.85, green: 0.85, blue: 0.85))
+                        .frame(height: 20)
+                }
+                
+                Divider()
+                
+                ForEach(0..<3) { _ in
+                    HStack {
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(Color(red: 0.85, green: 0.85, blue: 0.85))
+                            .frame(width: 20, height: 20)
+                        Rectangle()
+                            .fill(Color(red: 0.85, green: 0.85, blue: 0.85))
+                            .frame(height: 20)
+                    }
+                }
+            }
+            .padding()
+        }
+        .frame(width: 400, height: 200, alignment: .leading)
+    }
+}
 
 struct Request_Previews: PreviewProvider {
     static var previews: some View {
