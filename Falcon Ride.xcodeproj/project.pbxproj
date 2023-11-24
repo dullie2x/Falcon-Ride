@@ -23,6 +23,7 @@
 		A0A7F8462B0FFC49004CE458 /* OtherUserProfile2.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A7F8452B0FFC49004CE458 /* OtherUserProfile2.swift */; };
 		A0A7F8482B100AB2004CE458 /* RideInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A7F8472B100AB2004CE458 /* RideInfo.swift */; };
 		A0A7F84A2B102B73004CE458 /* Tester.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A7F8492B102B73004CE458 /* Tester.swift */; };
+		A0A7F84D2B106255004CE458 /* Activity.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A7F84C2B106255004CE458 /* Activity.swift */; };
 		A0C2F0A02B0291B700685DE5 /* Falcon_RideApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2F09F2B0291B700685DE5 /* Falcon_RideApp.swift */; };
 		A0C2F0A22B0291B700685DE5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2F0A12B0291B700685DE5 /* ContentView.swift */; };
 		A0C2F0A42B0291B900685DE5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A0C2F0A32B0291B900685DE5 /* Assets.xcassets */; };
@@ -96,6 +97,7 @@
 		A0A7F8452B0FFC49004CE458 /* OtherUserProfile2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherUserProfile2.swift; sourceTree = "<group>"; };
 		A0A7F8472B100AB2004CE458 /* RideInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideInfo.swift; sourceTree = "<group>"; };
 		A0A7F8492B102B73004CE458 /* Tester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tester.swift; sourceTree = "<group>"; };
+		A0A7F84C2B106255004CE458 /* Activity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Activity.swift; sourceTree = "<group>"; };
 		A0C2F09C2B0291B600685DE5 /* Falcon Ride.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Falcon Ride.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0C2F09F2B0291B700685DE5 /* Falcon_RideApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Falcon_RideApp.swift; sourceTree = "<group>"; };
 		A0C2F0A12B0291B700685DE5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -170,6 +172,14 @@
 			path = DataHandler;
 			sourceTree = "<group>";
 		};
+		A0A7F84B2B106220004CE458 /* Activity */ = {
+			isa = PBXGroup;
+			children = (
+				A0A7F84C2B106255004CE458 /* Activity.swift */,
+			);
+			path = Activity;
+			sourceTree = "<group>";
+		};
 		A0C2F0932B0291B600685DE5 = {
 			isa = PBXGroup;
 			children = (
@@ -204,6 +214,7 @@
 				A0C2F0CB2B02952B00685DE5 /* Reserve */,
 				A0C2F0CC2B02954A00685DE5 /* Request */,
 				A0C2F0CD2B02955300685DE5 /* Profile */,
+				A0A7F84B2B106220004CE458 /* Activity */,
 				A0E78FE32B074BC200A0678F /* Settings */,
 				A0C2F0CE2B02992A00685DE5 /* User Reserve */,
 				A0C2F0A32B0291B900685DE5 /* Assets.xcassets */,
@@ -473,6 +484,7 @@
 				A0A7F8482B100AB2004CE458 /* RideInfo.swift in Sources */,
 				A04D44482B06A10900B39A68 /* SplashView.swift in Sources */,
 				A0A7F8462B0FFC49004CE458 /* OtherUserProfile2.swift in Sources */,
+				A0A7F84D2B106255004CE458 /* Activity.swift in Sources */,
 				A01D50072B0496F400535DF1 /* MyProfile.swift in Sources */,
 				A01D50052B0495B400535DF1 /* Request.swift in Sources */,
 				A01D50032B03E38700535DF1 /* Reserve.swift in Sources */,

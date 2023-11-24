@@ -20,6 +20,10 @@ struct TabController: View {
                     Label("Request", systemImage: "paperplane.fill")
                 }
 
+            Activity()
+                .tabItem {
+                    Label("Activity", systemImage: "person.bubble.fill")
+                }
             MyProfile()
                 .tabItem {
                     Label("My Profile", systemImage: "person.crop.circle")
