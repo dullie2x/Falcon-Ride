@@ -163,8 +163,39 @@ class OtherUserProfileViewModel: ObservableObject {
             return
         }
         bookSeats(numberOfSeats: numberOfSeatsToBook, rideInfo: rideInfo)
-    }
-    
+
+                // Determine booking type and record the booking
+                let bookingType = getBookingType(rideInfo: rideInfo)
+                let bookerUserID = Auth.auth().currentUser?.uid ?? ""
+                let (rideId, _) = getRideDetails(rideInfo: rideInfo)
+
+                // Assuming that the provider's userID is already stored in rideInfo
+                let providerUserID = getProviderUserID(rideInfo: rideInfo)
+
+                DataHandler.shared.recordBooking(rideID: rideId, bookerUserID: bookerUserID, providerUserID: providerUserID, type: bookingType) { error in
+                    if let error = error {
+                        print("Error recording booking: \(error.localizedDescription)")
+                    }
+                }
+            }
+    private func getBookingType(rideInfo: RideInfo) -> String {
+         switch rideInfo {
+         case .reserve(_):
+             return "reservation"
+         case .request(_):
+             return "request"
+         }
+     }
+
+     // Helper method to get the provider's userID from rideInfo
+     private func getProviderUserID(rideInfo: RideInfo) -> String {
+         switch rideInfo {
+         case .reserve(let ride):
+             return ride.userID
+         case .request(let ride2):
+             return ride2.userID
+         }
+     }
     
     func bookSeats(numberOfSeats: Int, rideInfo: RideInfo) {
         isLoading = true

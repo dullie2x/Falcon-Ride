@@ -76,6 +76,20 @@ class DataHandler {
             completion(error)
         }
     }
+    
+    func recordBooking(rideID: String, bookerUserID: String, providerUserID: String, type: String, completion: @escaping (Error?) -> Void) {
+        let bookingData: [String: Any] = [
+            "rideID": rideID,
+            "bookerUserID": bookerUserID,
+            "providerUserID": providerUserID,
+            "type": type // "reservation" or "request"
+        ]
+
+        let ref = Database.database().reference()
+        ref.child("bookings").childByAutoId().setValue(bookingData) { error, _ in
+            completion(error)
+        }
+    }
 }
 
 

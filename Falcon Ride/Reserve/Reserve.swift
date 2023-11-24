@@ -91,7 +91,7 @@ struct Reserve: View {
                 
                 NavigationLink(destination: AddView(), isActive: $showingAddView) { EmptyView() }
             }
-            .navigationBarTitle("Available Rides", displayMode: .automatic)
+            .navigationBarTitle("Posted Rides", displayMode: .automatic)
             .navigationBarItems(trailing: addButton)
             .background(Color.white)
             .onAppear(perform: fetchRides)
