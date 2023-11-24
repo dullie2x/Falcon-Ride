@@ -64,7 +64,7 @@ struct OtherUserProfile: View {
                 title: Text("Ride Booked Successfully"),
                 message: Text("Would you like to message the driver now?"),
                 primaryButton: .default(Text("Yes"), action: {
-                    if let url = viewModel.messageDriverURL(phoneNumber: viewModel.userNumber, message: "Hello, I've just booked a ride with you/accepted a request from you.") {
+                    if let url = viewModel.messageDriverURL(phoneNumber: viewModel.userNumber, message: "Hello, I've just booked a ride with you/accepted a request from you!") {
                         UIApplication.shared.open(url)
                     }
                 }),
