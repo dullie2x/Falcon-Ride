@@ -50,9 +50,5 @@ extension Color {
 //    }
 //}
 
-struct RideCell_Previews: PreviewProvider {
-    static var previews: some View {
-        RideCell(ride: Ride(id: "1", userID: "User1", fromLocation: "Location A", toLocation: "Location B", seats: "2", date: "2023-01-01", time: "12:00", donationRequested: "5"), width: 300, height: 100)
-    }
-}
+
 

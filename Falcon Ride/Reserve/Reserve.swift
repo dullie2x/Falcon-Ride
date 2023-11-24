@@ -30,6 +30,7 @@ struct Reserve: View {
     @State private var searchText = ""
     @State private var showingAddView = false
     @State private var isLoading = true
+    private var currentUserID: String? = Auth.auth().currentUser?.uid
     
     
     init() {
@@ -70,7 +71,7 @@ struct Reserve: View {
                             }) { ride in
                                 NavigationLink(destination: OtherUserProfile(rideInfo: .reserve(ride))) {
                                     RideCell(ride: ride, width: 300, height: 100, onDelete: { selectedRide in
-                                        // Deletion logic goes here
+                                        guard selectedRide.userID == currentUserID else { return }
                                         DataHandler.shared.deleteRide(rideId: selectedRide.id, node: "rideReserve") { error in
                                             // Handle error or success
                                         }
@@ -85,7 +86,7 @@ struct Reserve: View {
                     }
                     .padding()
                 }
-
+                
                 
                 
                 NavigationLink(destination: AddView(), isActive: $showingAddView) { EmptyView() }
@@ -119,15 +120,15 @@ struct Reserve: View {
         
         ridesRef.observe(.value) { snapshot in
             var newRides: [Ride] = []
-
+            
             if snapshot.childrenCount == 0 {
                 print("No rides found in Firebase.")
                 self.isLoading = false
                 return
             }
-
+            
             let group = DispatchGroup()
-
+            
             for child in snapshot.children {
                 guard let snapshot = child as? DataSnapshot,
                       let dict = snapshot.value as? [String: Any],
@@ -135,41 +136,38 @@ struct Reserve: View {
                     print("Error parsing fields in ride data")
                     continue
                 }
-
-                // Only add rides posted by the current user
-                if currentUserID == userID {
-                    guard let fromLocation = dict["fromLocation"] as? String,
-                          let toLocation = dict["toLocation"] as? String,
-                          let seats = dict["seats"] as? String,
-                          let dateString = dict["date"] as? String,
-                          let timeString = dict["time"] as? String,
-                          let donationRequested = dict["donationRequested"] as? String else {
-                        print("Error parsing fields in ride data")
-                        continue
+                
+                guard let fromLocation = dict["fromLocation"] as? String,
+                      let toLocation = dict["toLocation"] as? String,
+                      let seats = dict["seats"] as? String,
+                      let dateString = dict["date"] as? String,
+                      let timeString = dict["time"] as? String,
+                      let donationRequested = dict["donationRequested"] as? String else {
+                    print("Error parsing fields in ride data")
+                    continue
+                }
+                
+                let formattedDate = formatDate(dateString: dateString)
+                let formattedTime = formatTime(timeString: timeString)
+                
+                group.enter()
+                usersRef.child(userID).observeSingleEvent(of: .value) { userSnapshot in
+                    var email = "", name = "", username = "", number = ""
+                    if let userDict = userSnapshot.value as? [String: Any] {
+                        email = userDict["email"] as? String ?? ""
+                        name = userDict["name"] as? String ?? ""
+                        username = userDict["username"] as? String ?? ""
+                        number = userDict["number"] as? String ?? ""
+                    } else {
+                        print("Error: Unable to fetch user data for userID: \(userID)")
                     }
-
-                    let formattedDate = formatDate(dateString: dateString)
-                    let formattedTime = formatTime(timeString: timeString)
-
-                    group.enter()
-                    usersRef.child(userID).observeSingleEvent(of: .value) { userSnapshot in
-                        var email = "", name = "", username = "", number = ""
-                        if let userDict = userSnapshot.value as? [String: Any] {
-                            email = userDict["email"] as? String ?? ""
-                            name = userDict["name"] as? String ?? ""
-                            username = userDict["username"] as? String ?? ""
-                            number = userDict["number"] as? String ?? ""
-                        } else {
-                            print("Error: Unable to fetch user data for userID: \(userID)")
-                        }
-                        
-                        let ride = Ride(id: snapshot.key, userID: userID, fromLocation: fromLocation, toLocation: toLocation, seats: seats, date: formattedDate, time: formattedTime, donationRequested: donationRequested, userEmail: email, userName: name, userUsername: username, userNumber: number)
-                        newRides.append(ride)
-                        group.leave()
-                    }
+                    
+                    let ride = Ride(id: snapshot.key, userID: userID, fromLocation: fromLocation, toLocation: toLocation, seats: seats, date: formattedDate, time: formattedTime, donationRequested: donationRequested, userEmail: email, userName: name, userUsername: username, userNumber: number)
+                    newRides.append(ride)
+                    group.leave()
                 }
             }
-
+            
             group.notify(queue: .main) {
                 self.rides = newRides.sorted { $0.date + $0.time > $1.date + $1.time }
                 self.isLoading = false
@@ -214,7 +212,7 @@ struct RideCell: View {
     var width: CGFloat
     var height: CGFloat
     var onDelete: (Ride) -> Void  // Closure to handle deletion
-
+    
     var body: some View {
         ZStack(alignment: .bottomTrailing) { // Align the delete button to the bottom trailing corner
             RoundedRectangle(cornerRadius: 10)
@@ -264,7 +262,7 @@ struct RideCell: View {
                     .padding(.top, 2)
             }
             .padding()
-
+            
             if ride.userID == Auth.auth().currentUser?.uid {
                 Button(action: { onDelete(ride) }) {
                     Image(systemName: "trash")
@@ -276,7 +274,7 @@ struct RideCell: View {
                 .padding() // Add padding to position the button inside the cell's corner
             }
         }
-        .frame(width: width, height: height, alignment: .leading)
+        .frame(width: 400, height: 200, alignment: .leading)
     }
 }
 
@@ -290,8 +288,8 @@ struct RideCellSkeleton: View {
             RoundedRectangle(cornerRadius: 10)
                 .fill(Color(red: 0.85, green: 0.85, blue: 0.85)) // Custom light gray color
                 .shadow(radius: 5)
-
-
+            
+            
             VStack(alignment: .leading, spacing: 15) {
                 HStack {
                     RoundedRectangle(cornerRadius: 4)

@@ -70,12 +70,12 @@ class DataHandler {
             completion(error)
         }
     }
-}
-
-func deleteRide(rideId: String, node: String, completion: @escaping (Error?) -> Void) {
-    let ref = Database.database().reference().child(node).child(rideId)
-    ref.removeValue { error, _ in
-        completion(error)
+    func deleteRide(rideId: String, node: String, completion: @escaping (Error?) -> Void) {
+        let ref = Database.database().reference().child(node).child(rideId)
+        ref.removeValue { error, _ in
+            completion(error)
+        }
     }
 }
+
 

@@ -19,68 +19,56 @@ struct AddView: View {
     @State private var posting = false
     @State private var showAlert = false
     @State private var alertMessage = ""
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         NavigationView {
             Form {
                 Section(header: Text("Ride Details").font(.headline)) {
-                    TextField("From", text: $fromLocation)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                    TextField("To", text: $toLocation)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                    TextField("Number of Seats Available", text: $seats)
-                        .keyboardType(.numberPad)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                    CustomTextField(placeholder: "From", text: $fromLocation)
+                    CustomTextField(placeholder: "To", text: $toLocation)
+                    CustomTextField(placeholder: "Number of Seats Available", text: $seats, keyboardType: .numberPad)
                 }
                 
                 Section(header: Text("Date and Time").font(.headline)) {
-                    DatePicker("Select Date and Time", selection: $selectedDate, displayedComponents: [.date, .hourAndMinute])
+                    DatePicker("Select Date and Time", selection: $selectedDate, in: Date()..., displayedComponents: [.date, .hourAndMinute])
                         .datePickerStyle(GraphicalDatePickerStyle())
                 }
                 
-                Section(header: Text("Additional Info.").font(.headline)) {
-                    TextField("Donation ($, Food, Gas, None)", text: $donationRequested)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                    TextField("Other Details", text: $additionalInfo)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                Section(header: Text("Additional Info").font(.headline)) {
+                    CustomTextField(placeholder: "Donation ($, Food, Gas, None)", text: $donationRequested)
+                    CustomTextField(placeholder: "Other Details", text: $additionalInfo)
                 }
                 
-                Button(action: postRide) {
-                    Text(posting ? "Posting..." : "Add Ride")
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 50)
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
-                        .disabled(posting)
-                }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 10)
+                SubmitButton(text: posting ? "Posting..." : "Add Ride", action: postRide, isLoading: $posting)
+                    .disabled(!isFormValid || posting)
             }
             .navigationBarTitle("Add Ride", displayMode: .inline)
-            .padding(.top, -20)
             .alert(isPresented: $showAlert) {
                 Alert(title: Text("Message"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
             }
         }
     }
-    
-    // Function to post a ride to Firebase Realtime Database
+
+    var isFormValid: Bool {
+        !fromLocation.isEmpty && !toLocation.isEmpty && !seats.isEmpty && !donationRequested.isEmpty
+    }
+
     func postRide() {
-        guard !fromLocation.isEmpty, !toLocation.isEmpty, !seats.isEmpty, !donationRequested.isEmpty else {
+        guard isFormValid else {
             alertMessage = "Please fill all fields."
             showAlert = true
             return
         }
-        
+
         guard let userID = Auth.auth().currentUser?.uid else {
             alertMessage = "User not logged in."
             showAlert = true
             return
         }
-        
+
         posting = true
-        
+
         let timeFormatter = DateFormatter()
         timeFormatter.dateStyle = .none
         timeFormatter.timeStyle = .short
@@ -97,10 +85,7 @@ struct AddView: View {
             "additionalInfo": additionalInfo
         ]
         
-        // Reference to the Firebase Database
         let ref = Database.database().reference()
-        
-        // Posting the ride under the 'rideReserve' node to match your fetch function
         ref.child("rideReserve").childByAutoId().setValue(rideDict) { (error, reference) in
             posting = false
             if let error = error {
@@ -110,11 +95,11 @@ struct AddView: View {
                 resetForm()
                 alertMessage = "Ride successfully added!"
                 showAlert = true
+                presentationMode.wrappedValue.dismiss()
             }
         }
-    }
+        }
 
-    
     func resetForm() {
         fromLocation = ""
         toLocation = ""
@@ -122,6 +107,43 @@ struct AddView: View {
         selectedDate = Date()
         donationRequested = ""
         additionalInfo = ""
+    }
+}
+
+struct CustomTextField: View {
+    var placeholder: String
+    @Binding var text: String
+    var keyboardType: UIKeyboardType = .default
+
+    var body: some View {
+        TextField(placeholder, text: $text)
+            .keyboardType(keyboardType)
+            .textFieldStyle(RoundedBorderTextFieldStyle())
+            .accessibilityLabel(placeholder)
+    }
+}
+
+struct SubmitButton: View {
+    var text: String
+    var action: () -> Void
+    @Binding var isLoading: Bool
+
+    var body: some View {
+        Button(action: action) {
+            if isLoading {
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+            } else {
+                Text(text)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 50)
+        .background(Color.blue)
+        .foregroundColor(.white)
+        .cornerRadius(10)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 10)
     }
 }
 
