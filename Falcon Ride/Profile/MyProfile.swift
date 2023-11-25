@@ -46,13 +46,22 @@ struct MyProfile: View {
 
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(alignment: .leading) {
-                    ProfileHeaderView(name: userName, username: userUsername, number: userNumber, width: 400, height: 200)
-                        .shadow(radius: 10)
-                        .padding()
+            VStack {
+                ScrollView {
+                    VStack(alignment: .leading) {
+                        ProfileHeaderView(name: userName, username: userUsername, number: userNumber, width: 400, height: 200)
+                            .shadow(radius: 10)
+                            .padding()
+                    }
+                    .padding()
                 }
-                .padding()
+
+                Text("Contact Abdulmalik Ariyo on teams for any questions and feedback! Thank you!")
+                    .multilineTextAlignment(.center)
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
+                    .padding(.bottom, 20)
+                    .frame(maxWidth: 300, alignment: .center)
 
                 NavigationLink(destination: Settings(), isActive: $navigateToSettings) { EmptyView() }
             }
@@ -95,7 +104,7 @@ struct ProfileHeaderView: View {
             HStack {
                 Spacer()
                 Button(action: /* Action for Edit */ {}) {
-                    Label("Edit Profile", systemImage: "pencil")
+                    Label("Edit Profile (coming soon)", systemImage: "pencil")
                 }
                 .buttonStyle(BorderlessButtonStyle())
                 Spacer()

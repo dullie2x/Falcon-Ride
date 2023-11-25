@@ -11,6 +11,7 @@ import FirebaseAuth
 
 struct OtherUserProfile: View {
     var rideInfo: RideInfo // Using RideInfo enum
+    var additionalInfo: String
     @StateObject private var viewModel = OtherUserProfileViewModel()
     
     var body: some View {
@@ -28,6 +29,9 @@ struct OtherUserProfile: View {
                         .padding()
                 }
                 
+                Text("\"\(additionalInfo)\"") // Display additionalInfo
+                          .padding()
+                
                 Stepper("Number of Seats: \(viewModel.numberOfSeatsToBook)", value: $viewModel.numberOfSeatsToBook, in: 1...10)
                     .padding(50)
                 
@@ -40,7 +44,7 @@ struct OtherUserProfile: View {
                 Button(action: {
                     viewModel.confirmBooking(rideInfo: rideInfo)
                 }) {
-                    Text("Confirm Booking")
+                    Text("Confirm")
                         .font(.title2)
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
@@ -64,7 +68,7 @@ struct OtherUserProfile: View {
                 title: Text("Ride Booked/Requested Successfully"),
                 message: Text("Would you like to message the user now?"),
                 primaryButton: .default(Text("Yes"), action: {
-                    if let url = viewModel.messageDriverURL(phoneNumber: viewModel.userNumber, message: "Hello, I've just booked a ride with you/accepted a request from you!") {
+                    if let url = viewModel.messageDriverURL(phoneNumber: viewModel.userNumber, message: "Hello, My name is _____. I've just booked a ride with you/accepted a request from you!") {
                         UIApplication.shared.open(url)
                     }
                 }),
@@ -83,19 +87,19 @@ struct OtherProfileHeaderView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(name)
-                .font(.system(size: 30, weight: .bold, design: .rounded))
-                .foregroundColor(Color.darkBlue)
+//            Text(name)
+//                .font(.system(size: 30, weight: .bold, design: .rounded))
+//                .foregroundColor(Color.darkBlue)
             
             Text("@\(username)")
                 .font(.system(size: 22, weight: .medium, design: .rounded))
                 .foregroundColor(Color.darkBlue)
             
-            Text(number)
-                .font(.system(size: 20, weight: .regular, design: .rounded))
-                .foregroundColor(Color.black)
+//            Text(number)
+//                .font(.system(size: 20, weight: .regular, design: .rounded))
+//                .foregroundColor(Color.black)
             
-            Divider().background(Color.darkBlue)
+           // Divider().background(Color.darkBlue)
         }
         .padding()
         .frame(width: width, height: height)
@@ -212,7 +216,7 @@ class OtherUserProfileViewModel: ObservableObject {
                 } else {
                     DispatchQueue.main.async {
                         self.alertMessage = "Not enough seats available."
-                        self.showingAlert = true
+                        self.showError = true // Set showError to true to display the error message
                         self.isLoading = false
                     }
                     return .abort()
@@ -224,10 +228,10 @@ class OtherUserProfileViewModel: ObservableObject {
             DispatchQueue.main.async {
                 if let error = error {
                     self.alertMessage = "Error: \(error.localizedDescription)"
-                    self.showingAlert = true
+                    self.showError = true // Set showError to true to display the error message
                 } else if committed {
-                    // Trigger the message prompt only after successful booking
-                    self.shouldPromptForMessage = true
+                    self.alertMessage = "Seats booked successfully."
+                    self.shouldPromptForMessage = true // Trigger the message prompt only after successful booking
                 }
                 self.isLoading = false
             }

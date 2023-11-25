@@ -22,6 +22,7 @@ struct Ride2: Identifiable {
     var userName: String?
     var userUsername: String?
     var userNumber: String?
+    var additionalInfo: String?
 }
 
 struct Request: View {
@@ -67,7 +68,7 @@ struct Request: View {
                             ForEach(rides2.filter {
                                 searchText.isEmpty || $0.fromLocation.localizedCaseInsensitiveContains(searchText) || $0.toLocation.localizedCaseInsensitiveContains(searchText)
                             }) { ride2 in
-                                NavigationLink(destination: OtherUserProfile(rideInfo: .request(ride2))) {
+                                NavigationLink(destination: OtherUserProfile(rideInfo: .request(ride2), additionalInfo: ride2.additionalInfo ?? "")) {
                                     RideCell2(ride2: ride2, width: 300, height: 100, onDelete: { selectedRide in
                                         // Deletion logic goes here
                                         DataHandler.shared.deleteRide(rideId: selectedRide.id, node: "rideRequest") { error in
@@ -128,17 +129,14 @@ struct Request: View {
             for child in snapshot.children {
                 guard let snapshot = child as? DataSnapshot,
                       let dict = snapshot.value as? [String: Any],
-                      let userID = dict["userID"] as? String else {
-                    print("Error parsing fields in ride data")
-                    continue
-                }
-                
-                guard let fromLocation = dict["fromLocation"] as? String,
+                      let userID = dict["userID"] as? String,
+                      let fromLocation = dict["fromLocation"] as? String,
                       let toLocation = dict["toLocation"] as? String,
                       let seats = dict["seats"] as? String,
                       let dateString = dict["date"] as? String,
                       let timeString = dict["time"] as? String,
-                      let donationRequested = dict["donationRequested"] as? String else {
+                      let donationRequested = dict["donationRequested"] as? String,
+                      let additionalInfo = dict["additionalInfo"] as? String else {
                     print("Error parsing fields in ride data")
                     continue
                 }
@@ -158,7 +156,7 @@ struct Request: View {
                         print("Error: Unable to fetch user data for userID: \(userID)")
                     }
                     
-                    let ride2 = Ride2(id: snapshot.key, userID: userID, fromLocation: fromLocation, toLocation: toLocation, seats: seats, date: formattedDate, time: formattedTime, donationRequested: donationRequested, userEmail: email, userName: name, userUsername: username, userNumber: number)
+                    let ride2 = Ride2(id: snapshot.key, userID: userID, fromLocation: fromLocation, toLocation: toLocation, seats: seats, date: formattedDate, time: formattedTime, donationRequested: donationRequested, userEmail: email, userName: name, userUsername: username, userNumber: number, additionalInfo: additionalInfo)
                     newRides2.append(ride2)
                     group.leave()
                 }
