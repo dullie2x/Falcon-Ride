@@ -12,7 +12,7 @@ struct ParentView: View {
 
     var body: some View {
         if authViewModel.isUserAuthenticated {
-            TabController()
+            SplashView()
                 .environmentObject(authViewModel)
         } else {
             Login(isLoggedIn: $authViewModel.isUserAuthenticated)
