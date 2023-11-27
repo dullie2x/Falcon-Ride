@@ -81,15 +81,15 @@ struct EditReserve: View {
     func updateRide() {
         posting = true
 
-        let dateFormatter = ISO8601DateFormatter()
-        dateFormatter.formatOptions = [.withFullDate, .withDashSeparatorInDate]
-        let formattedDate = dateFormatter.string(from: selectedDate)
+        let isoFormatter = ISO8601DateFormatter()
+        isoFormatter.formatOptions = [.withInternetDateTime]
+        let formattedDateTime = isoFormatter.string(from: selectedDate)
 
         let rideDict: [String: Any] = [
             "fromLocation": fromLocation,
             "toLocation": toLocation,
             "seats": seats,
-            "date": formattedDate,
+            "date": formattedDateTime,
             "time": formatTime(time: selectedDate),
             "donationRequested": donationRequested,
             "additionalInfo": additionalInfo

@@ -19,87 +19,97 @@ struct ActivityItem: Identifiable {
 // ViewModel to handle data fetching and processing
 class ActivityViewModel: ObservableObject {
     @Published var activities = [ActivityItem]()
-
+    
     func fetchActivities() {
-        guard let currentUserID = Auth.auth().currentUser?.uid else { return }
+            guard let currentUserID = Auth.auth().currentUser?.uid else { return }
 
-        let ref = Database.database().reference()
-        let bookingsRef = ref.child("bookings")
-        let usersRef = ref.child("users")
+            let ref = Database.database().reference()
+            let bookingsRef = ref.child("bookings")
+            let usersRef = ref.child("users")
 
-        bookingsRef.observe(.value) { [weak self] snapshot in
-            var newActivities = [ActivityItem]()
-            let group = DispatchGroup()
+            bookingsRef.observe(.value) { [weak self] snapshot in
+                var newActivities = [ActivityItem]()
+                let group = DispatchGroup()
 
-            for child in snapshot.children {
-                guard let self = self,
-                      let snapshot = child as? DataSnapshot,
-                      let dict = snapshot.value as? [String: Any],
-                      let providerUserID = dict["providerUserID"] as? String,
-                      providerUserID == currentUserID,
-                      let bookerUserID = dict["bookerUserID"] as? String,
-                      let rideID = dict["rideID"] as? String,
-                      let type = dict["type"] as? String else {
-                    continue
-                }
-
-                group.enter()
-                usersRef.child(bookerUserID).observeSingleEvent(of: .value) { userSnapshot in
-                    var userName = "Unknown User"
-                    var userNumber = "Unknown Number"
-
-                    if let userDict = userSnapshot.value as? [String: Any] {
-                        userName = userDict["name"] as? String ?? userName
-                        userNumber = userDict["number"] as? String ?? userNumber
+                for child in snapshot.children {
+                    guard let self = self,
+                          let snapshot = child as? DataSnapshot,
+                          let dict = snapshot.value as? [String: Any],
+                          let providerUserID = dict["providerUserID"] as? String,
+                          providerUserID == currentUserID,
+                          let bookerUserID = dict["bookerUserID"] as? String,
+                          let rideID = dict["rideID"] as? String,
+                          let type = dict["type"] as? String else {
+                        continue
                     }
 
-                    let rideNode = type == "reservation" ? "rideReserve" : "rideRequest"
-                    ref.child(rideNode).child(rideID).observeSingleEvent(of: .value) { rideSnapshot in
-                        var date = "Unknown Date"
-                        var time = "Unknown Time"
-                        if let rideDict = rideSnapshot.value as? [String: Any] {
-                            date = rideDict["date"] as? String ?? date
-                            time = rideDict["time"] as? String ?? time
+                    group.enter()
+                    usersRef.child(bookerUserID).observeSingleEvent(of: .value) { (userSnapshot, errorString) in
+                        if let errorString = errorString {
+                            print("Error fetching user data: \(errorString)")
+                            group.leave()
+                            return
                         }
 
-                        let formattedDateTime = self.formatDateTime(dateString: date, timeString: time)
-                        let message = "\(userName) (\(userNumber)) \(type == "reservation" ? "booked a ride from you." : "fulfilled your ride request.")"
+                        var userName = "Unknown User"
+                        var userNumber = "Unknown Number"
 
-                        let activity = ActivityItem(message: message, dateString: formattedDateTime)
-                        newActivities.append(activity)
-                        group.leave()
+                        if let userDict = userSnapshot.value as? [String: Any] {
+                            userName = userDict["name"] as? String ?? userName
+                            userNumber = userDict["number"] as? String ?? userNumber
+                        }
+
+                        let rideNode = type == "reservation" ? "rideReserve" : "rideRequest"
+                        ref.child(rideNode).child(rideID).observeSingleEvent(of: .value) { (rideSnapshot, errorString) in
+                            if let errorString = errorString {
+                                print("Error fetching ride data: \(errorString)")
+                                group.leave()
+                                return
+                            }
+
+                            if let rideDict = rideSnapshot.value as? [String: Any],
+                               let dateTimeString = rideDict["date"] as? String {
+                                let formattedDateTime = self.formatDateTime(dateTimeString: dateTimeString)
+                                let message = "\(userName) (\(userNumber)) \(type == "reservation" ? "booked a ride from you." : "fulfilled your ride request.")"
+
+                                let activity = ActivityItem(message: message, dateString: formattedDateTime)
+                                newActivities.append(activity)
+                            } else {
+                                print("No ride data found for ride ID: \(rideID)")
+                            }
+                            group.leave()
+                        }
                     }
                 }
+
+                group.notify(queue: .main) {
+                    self?.activities = newActivities
+                }
+            }
+        }
+
+        private func formatDateTime(dateTimeString: String) -> String {
+            let isoFormatter = ISO8601DateFormatter()
+            isoFormatter.formatOptions = [.withInternetDateTime]
+
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateStyle = .long // Example: November 25, 2023
+            dateFormatter.timeStyle = .short // Example: 3:00 AM
+
+            var formattedDateTime = "Unknown Date and Time"
+
+            if let date = isoFormatter.date(from: dateTimeString) {
+                formattedDateTime = dateFormatter.string(from: date)
             }
 
-            group.notify(queue: .main) {
-                self?.activities = newActivities
-            }
+            return formattedDateTime
         }
     }
 
-    private func formatDateTime(dateString: String, timeString: String) -> String {
-        let isoFormatter = ISO8601DateFormatter()
-        isoFormatter.formatOptions = [.withFullDate, .withTime, .withDashSeparatorInDate, .withColonSeparatorInTime]
-
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .long // Example: November 25, 2023
-        dateFormatter.timeStyle = .short // Example: 3:00 AM
-
-        var formattedDateTime = "Unknown Date and Time"
-
-        if let date = isoFormatter.date(from: dateString) {
-            formattedDateTime = dateFormatter.string(from: date)
-        }
-        
-        return formattedDateTime
-    }
-
-}
-    // SwiftUI View for displaying activities
+// SwiftUI View for displaying activities
 struct Activity: View {
     @StateObject private var viewModel = ActivityViewModel()
-
+    
     var body: some View {
         NavigationView {
             Group {
@@ -116,14 +126,14 @@ struct Activity: View {
                                 .frame(width: 50, height: 50)
                                 .foregroundColor(.blue)
                                 .padding(.leading, 5)
-
+                            
                             VStack(alignment: .leading, spacing: 5) {
                                 Text(activity.message)
                                     .fontWeight(.semibold)
                                     .foregroundColor(Color.primary)
                                     .lineLimit(2)
                                     .multilineTextAlignment(.leading)
-
+                                
                                 Text(activity.dateString)
                                     .font(.subheadline)
                                     .foregroundColor(.gray)

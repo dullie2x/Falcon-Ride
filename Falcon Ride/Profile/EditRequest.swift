@@ -13,7 +13,7 @@ import FirebaseAuth
 struct EditRequest: View {
     @Binding var ride2: Ride2
     var rideType: RideType
-
+    
     @State private var fromLocation: String = ""
     @State private var toLocation: String = ""
     @State private var seats: String = ""
@@ -24,7 +24,7 @@ struct EditRequest: View {
     @State private var showAlert: Bool = false
     @State private var alertMessage: String = ""
     @Environment(\.presentationMode) var presentationMode
-
+    
     init(ride2: Binding<Ride2>, rideType: RideType) {
         self._ride2 = ride2
         self.rideType = rideType
@@ -43,8 +43,8 @@ struct EditRequest: View {
             self._selectedDate = State(initialValue: Date())
         }
     }
-
-
+    
+    
     var body: some View {
         NavigationView {
             Form {
@@ -78,19 +78,19 @@ struct EditRequest: View {
             }
         }
     }
-
+    
     func updateRide() {
         posting = true
-
-        let dateFormatter = ISO8601DateFormatter()
-        dateFormatter.formatOptions = [.withFullDate, .withDashSeparatorInDate]
-        let formattedDate = dateFormatter.string(from: selectedDate)
-
+        
+        let isoFormatter = ISO8601DateFormatter()
+        isoFormatter.formatOptions = [.withInternetDateTime]
+        let formattedDateTime = isoFormatter.string(from: selectedDate)
+        
         let rideDict: [String: Any] = [
             "fromLocation": fromLocation,
             "toLocation": toLocation,
             "seats": seats,
-            "date": formattedDate,
+            "date": formattedDateTime,
             "time": formatTime(time: selectedDate),
             "donationRequested": donationRequested,
             "additionalInfo": additionalInfo
@@ -110,7 +110,7 @@ struct EditRequest: View {
             }
         }
     }
-
+    
     private func formatTime(time: Date) -> String {
         let formatter = DateFormatter()
         formatter.timeStyle = .short
