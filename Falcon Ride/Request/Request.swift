@@ -184,13 +184,15 @@ struct RideCell2: View {
     var ride2: Ride2
     var width: CGFloat
     var height: CGFloat
-    var onDelete: (Ride2) -> Void  // Closure to handle deletion
-    
+    var onDelete: (Ride2) -> Void
+    @State private var isEditing = false
+
     var body: some View {
-        ZStack(alignment: .bottomTrailing) { // Align the delete button to the bottom trailing corner
+        ZStack {
             RoundedRectangle(cornerRadius: 10)
                 .fill(Color.white)
                 .shadow(radius: 5)
+
             VStack(alignment: .leading, spacing: 15) {
                 HStack {
                     Image(systemName: "car.fill")
@@ -200,9 +202,9 @@ struct RideCell2: View {
                         .foregroundColor(.darkBlue)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                
+
                 Divider()
-                
+
                 HStack {
                     Image(systemName: "calendar")
                         .foregroundColor(.secondary)
@@ -211,7 +213,7 @@ struct RideCell2: View {
                         .foregroundColor(.gray)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                
+
                 HStack {
                     Image(systemName: "clock")
                         .foregroundColor(.secondary)
@@ -220,7 +222,7 @@ struct RideCell2: View {
                         .foregroundColor(.gray)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                
+
                 HStack {
                     Image(systemName: "person.3.fill")
                         .foregroundColor(.secondary)
@@ -229,27 +231,53 @@ struct RideCell2: View {
                         .foregroundColor(.gray)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
+
                 Text("Posted by: \(ride2.userUsername ?? "Unknown")")
                     .font(.footnote)
                     .foregroundColor(.darkBlue)
                     .padding(.top, 2)
             }
             .padding()
-            
+
             if ride2.userID == Auth.auth().currentUser?.uid {
-                Button(action: { onDelete(ride2) }) {
-                    Image(systemName: "trash")
-                        .foregroundColor(.white)
-                        .padding(10)
-                        .background(Color.red)
-                        .clipShape(Circle())
+                VStack {
+                    HStack {
+                        Spacer() // Spacer to push the button to the right
+
+                        // Edit button at the top
+                        Button(action: { isEditing = true }) {
+                            Image(systemName: "pencil")
+                                .foregroundColor(.white)
+                                .padding(10)
+                                .background(Color.blue)
+                                .clipShape(Circle())
+                        }
+
+                        NavigationLink(destination: EditRequest(ride2: Binding.constant(ride2), rideType: .request), isActive: $isEditing) { EmptyView() }
+                    }
+
+                    Spacer() // Spacer to push delete button to the bottom
+
+                    HStack {
+                        Spacer() // Spacer to push the button to the right
+
+                        // Delete button at the bottom
+                        Button(action: { onDelete(ride2) }) {
+                            Image(systemName: "trash")
+                                .foregroundColor(.white)
+                                .padding(10)
+                                .background(Color.red)
+                                .clipShape(Circle())
+                        }
+                    }
                 }
-                .padding() // Add padding to position the button inside the cell's corner
+                .padding() // Padding for the overall VStack
             }
         }
         .frame(width: 400, height: 200, alignment: .leading)
     }
 }
+
 
 
 

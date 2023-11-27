@@ -21,7 +21,7 @@
 		A075E6252B0A44130025E928 /* DataHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A075E6242B0A44130025E928 /* DataHandler.swift */; };
 		A075E6272B0A70DC0025E928 /* ParentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A075E6262B0A70DC0025E928 /* ParentView.swift */; };
 		A0A7F8482B100AB2004CE458 /* RideInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A7F8472B100AB2004CE458 /* RideInfo.swift */; };
-		A0A7F84A2B102B73004CE458 /* Tester.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A7F8492B102B73004CE458 /* Tester.swift */; };
+		A0A7F84A2B102B73004CE458 /* EditReserve.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A7F8492B102B73004CE458 /* EditReserve.swift */; };
 		A0A7F84D2B106255004CE458 /* Activity.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A7F84C2B106255004CE458 /* Activity.swift */; };
 		A0C2F0A02B0291B700685DE5 /* Falcon_RideApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2F09F2B0291B700685DE5 /* Falcon_RideApp.swift */; };
 		A0C2F0A22B0291B700685DE5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2F0A12B0291B700685DE5 /* ContentView.swift */; };
@@ -30,6 +30,8 @@
 		A0C2F0B12B0291BA00685DE5 /* Falcon_RideTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2F0B02B0291BA00685DE5 /* Falcon_RideTests.swift */; };
 		A0C2F0BB2B0291BA00685DE5 /* Falcon_RideUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2F0BA2B0291BA00685DE5 /* Falcon_RideUITests.swift */; };
 		A0C2F0BD2B0291BA00685DE5 /* Falcon_RideUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2F0BC2B0291BA00685DE5 /* Falcon_RideUITestsLaunchTests.swift */; };
+		A0F0CF122B153224009B90F1 /* EditRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F0CF112B153224009B90F1 /* EditRequest.swift */; };
+		A0F0CF142B1539EC009B90F1 /* ActivityInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F0CF132B1539EC009B90F1 /* ActivityInfo.swift */; };
 		A0FC6F432B096C7400E6085A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A0FC6F422B096C7300E6085A /* GoogleService-Info.plist */; };
 		A0FC6F442B096C7400E6085A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A0FC6F422B096C7300E6085A /* GoogleService-Info.plist */; };
 		A0FC6F452B096C7400E6085A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A0FC6F422B096C7300E6085A /* GoogleService-Info.plist */; };
@@ -94,7 +96,7 @@
 		A075E6242B0A44130025E928 /* DataHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataHandler.swift; sourceTree = "<group>"; };
 		A075E6262B0A70DC0025E928 /* ParentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentView.swift; sourceTree = "<group>"; };
 		A0A7F8472B100AB2004CE458 /* RideInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideInfo.swift; sourceTree = "<group>"; };
-		A0A7F8492B102B73004CE458 /* Tester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tester.swift; sourceTree = "<group>"; };
+		A0A7F8492B102B73004CE458 /* EditReserve.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditReserve.swift; sourceTree = "<group>"; };
 		A0A7F84C2B106255004CE458 /* Activity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Activity.swift; sourceTree = "<group>"; };
 		A0C2F09C2B0291B600685DE5 /* Falcon Ride.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Falcon Ride.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0C2F09F2B0291B700685DE5 /* Falcon_RideApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Falcon_RideApp.swift; sourceTree = "<group>"; };
@@ -106,6 +108,8 @@
 		A0C2F0B62B0291BA00685DE5 /* Falcon RideUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Falcon RideUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0C2F0BA2B0291BA00685DE5 /* Falcon_RideUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Falcon_RideUITests.swift; sourceTree = "<group>"; };
 		A0C2F0BC2B0291BA00685DE5 /* Falcon_RideUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Falcon_RideUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		A0F0CF112B153224009B90F1 /* EditRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditRequest.swift; sourceTree = "<group>"; };
+		A0F0CF132B1539EC009B90F1 /* ActivityInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityInfo.swift; sourceTree = "<group>"; };
 		A0FC6F422B096C7300E6085A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -174,6 +178,7 @@
 			isa = PBXGroup;
 			children = (
 				A0A7F84C2B106255004CE458 /* Activity.swift */,
+				A0F0CF132B1539EC009B90F1 /* ActivityInfo.swift */,
 			);
 			path = Activity;
 			sourceTree = "<group>";
@@ -214,7 +219,7 @@
 				A0C2F0CD2B02955300685DE5 /* Profile */,
 				A0A7F84B2B106220004CE458 /* Activity */,
 				A0E78FE32B074BC200A0678F /* Settings */,
-				A0C2F0CE2B02992A00685DE5 /* User Reserve */,
+				A0C2F0CE2B02992A00685DE5 /* Edit Post */,
 				A0C2F0A32B0291B900685DE5 /* Assets.xcassets */,
 				A0C2F0A52B0291B900685DE5 /* Preview Content */,
 			);
@@ -283,12 +288,13 @@
 			path = Profile;
 			sourceTree = "<group>";
 		};
-		A0C2F0CE2B02992A00685DE5 /* User Reserve */ = {
+		A0C2F0CE2B02992A00685DE5 /* Edit Post */ = {
 			isa = PBXGroup;
 			children = (
-				A0A7F8492B102B73004CE458 /* Tester.swift */,
+				A0A7F8492B102B73004CE458 /* EditReserve.swift */,
+				A0F0CF112B153224009B90F1 /* EditRequest.swift */,
 			);
-			name = "User Reserve";
+			name = "Edit Post";
 			path = Profile;
 			sourceTree = "<group>";
 		};
@@ -473,8 +479,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				A01D500B2B0499EB00535DF1 /* AddRequest.swift in Sources */,
+				A0F0CF122B153224009B90F1 /* EditRequest.swift in Sources */,
 				A0687AA02B07E44200A68BB8 /* SignUp.swift in Sources */,
-				A0A7F84A2B102B73004CE458 /* Tester.swift in Sources */,
+				A0A7F84A2B102B73004CE458 /* EditReserve.swift in Sources */,
 				A0687AA22B07FE7100A68BB8 /* Settings.swift in Sources */,
 				A0C2F0A22B0291B700685DE5 /* ContentView.swift in Sources */,
 				A075E6272B0A70DC0025E928 /* ParentView.swift in Sources */,
@@ -485,6 +492,7 @@
 				A01D50052B0495B400535DF1 /* Request.swift in Sources */,
 				A01D50032B03E38700535DF1 /* Reserve.swift in Sources */,
 				A075E6252B0A44130025E928 /* DataHandler.swift in Sources */,
+				A0F0CF142B1539EC009B90F1 /* ActivityInfo.swift in Sources */,
 				A01D500D2B049D2E00535DF1 /* OtherUserProfile.swift in Sources */,
 				A0C2F0A02B0291B700685DE5 /* Falcon_RideApp.swift in Sources */,
 				A01666582B05283700C73157 /* TabController.swift in Sources */,
@@ -578,7 +586,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -635,7 +643,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -656,11 +664,14 @@
 				DEVELOPMENT_TEAM = 9YFR4MTQA7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -668,9 +679,12 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.FalconRide.Falcon-Ride";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -685,11 +699,14 @@
 				DEVELOPMENT_TEAM = 9YFR4MTQA7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -697,9 +714,12 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.FalconRide.Falcon-Ride";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

@@ -103,9 +103,9 @@ struct ProfileHeaderView: View {
             // Additional User Info or Actions
             HStack {
                 Spacer()
-                Button(action: /* Action for Edit */ {}) {
-                    Label("Edit Profile (coming soon)", systemImage: "pencil")
-                }
+//                Button(action: /* Action for Edit */ {}) {
+//                    Label("Edit Profile (coming soon)", systemImage: "pencil")
+//                }
                 .buttonStyle(BorderlessButtonStyle())
                 Spacer()
             }

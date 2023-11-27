@@ -76,6 +76,25 @@ class DataHandler {
             completion(error)
         }
     }
+    func deleteUserAccount(completion: @escaping (Error?) -> Void) {
+        guard let userID = Auth.auth().currentUser?.uid else {
+            completion(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "User not logged in"]))
+            return
+        }
+
+        // Delete user data from database
+        let userRef = Database.database().reference().child("users").child(userID)
+        userRef.removeValue { error, _ in
+            if let error = error {
+                completion(error)
+                return
+            }
+
+            // Delete the user account
+            Auth.auth().currentUser?.delete(completion: completion)
+        }
+    }
+
     
     func recordBooking(rideID: String, bookerUserID: String, providerUserID: String, type: String, completion: @escaping (Error?) -> Void) {
         let bookingData: [String: Any] = [

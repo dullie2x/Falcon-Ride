@@ -11,3 +11,7 @@ enum RideInfo {
     case reserve(Ride)
     case request(Ride2)
 }
+enum RideType {
+    case reserve, request
+}
+

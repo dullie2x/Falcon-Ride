@@ -10,11 +10,13 @@ import FirebaseAuth
 
 struct Settings: View {
     @EnvironmentObject var authViewModel: AuthenticationViewModel
+    @State private var showingDeleteAlert = false
 
     var body: some View {
         NavigationView {
-            VStack {
+            VStack(spacing: 20) {
                 Spacer()
+
                 Text("Need a break? We might miss you.")
                     .font(.subheadline)
                     .foregroundColor(.gray)
@@ -24,10 +26,39 @@ struct Settings: View {
                     logOutUser()
                 }) {
                     Text("Log Out")
-                        .foregroundColor(.red)
+                        .foregroundColor(.white)
                         .fontWeight(.bold)
-                        .shadow(radius: 5)
+                        .padding()
+                        .frame(maxWidth: 300)
+                        .background(Color.blue)
+                        .cornerRadius(10)
+                        .padding(.horizontal, 20)
                 }
+
+                Spacer()
+
+                Button(action: {
+                    self.showingDeleteAlert = true
+                }) {
+                    Text("Delete Account")
+                        .foregroundColor(.white)
+                        .fontWeight(.bold)
+                        .padding()
+                        .frame(maxWidth: 200)
+                        .background(Color.red)
+                        .cornerRadius(10)
+                        .padding(.horizontal, 20)
+                }
+                .alert(isPresented: $showingDeleteAlert) {
+                    Alert(title: Text("Delete Account"),
+                          message: Text("Are you sure you want to delete your account? This action cannot be undone."),
+                          primaryButton: .destructive(Text("Delete")) {
+                              deleteUser()
+                          },
+                          secondaryButton: .cancel()
+                    )
+                }
+
                 Spacer()
             }
             .navigationBarTitle("Settings", displayMode: .inline)
@@ -40,6 +71,18 @@ struct Settings: View {
             authViewModel.isUserAuthenticated = false
         } catch let signOutError as NSError {
             print("Error signing out: %@", signOutError)
+        }
+    }
+
+    private func deleteUser() {
+        DataHandler.shared.deleteUserAccount { error in
+            if let error = error {
+                print("Error deleting user: \(error.localizedDescription)")
+                // You may want to show an alert here if there is an error
+            } else {
+                authViewModel.isUserAuthenticated = false
+                // Perform any additional clean-up or navigation as needed
+            }
         }
     }
 }
