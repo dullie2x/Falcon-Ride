@@ -186,13 +186,15 @@ struct RideCell2: View {
     var height: CGFloat
     var onDelete: (Ride2) -> Void
     @State private var isEditing = false
-
+    @State private var showingDeleteAlert = false
+    
+    
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 10)
                 .fill(Color.white)
                 .shadow(radius: 5)
-
+            
             VStack(alignment: .leading, spacing: 15) {
                 HStack {
                     Image(systemName: "car.fill")
@@ -202,9 +204,9 @@ struct RideCell2: View {
                         .foregroundColor(.darkBlue)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
-
+                
                 Divider()
-
+                
                 HStack {
                     Image(systemName: "calendar")
                         .foregroundColor(.secondary)
@@ -213,7 +215,7 @@ struct RideCell2: View {
                         .foregroundColor(.gray)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
-
+                
                 HStack {
                     Image(systemName: "clock")
                         .foregroundColor(.secondary)
@@ -222,7 +224,7 @@ struct RideCell2: View {
                         .foregroundColor(.gray)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
-
+                
                 HStack {
                     Image(systemName: "person.3.fill")
                         .foregroundColor(.secondary)
@@ -231,19 +233,19 @@ struct RideCell2: View {
                         .foregroundColor(.gray)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
-
+                
                 Text("Posted by: \(ride2.userUsername ?? "Unknown")")
                     .font(.footnote)
                     .foregroundColor(.darkBlue)
                     .padding(.top, 2)
             }
             .padding()
-
+            
             if ride2.userID == Auth.auth().currentUser?.uid {
                 VStack {
                     HStack {
                         Spacer() // Spacer to push the button to the right
-
+                        
                         // Edit button at the top
                         Button(action: { isEditing = true }) {
                             Image(systemName: "pencil")
@@ -252,15 +254,15 @@ struct RideCell2: View {
                                 .background(Color.blue)
                                 .clipShape(Circle())
                         }
-
+                        
                         NavigationLink(destination: EditRequest(ride2: Binding.constant(ride2), rideType: .request), isActive: $isEditing) { EmptyView() }
                     }
-
+                    
                     Spacer() // Spacer to push delete button to the bottom
-
+                    
                     HStack {
                         Spacer() // Spacer to push the button to the right
-
+                        
                         // Delete button at the bottom
                         Button(action: { onDelete(ride2) }) {
                             Image(systemName: "trash")
@@ -275,6 +277,16 @@ struct RideCell2: View {
             }
         }
         .frame(width: 400, height: 200, alignment: .leading)
+        .alert(isPresented: $showingDeleteAlert) {
+            Alert(
+                title: Text("Confirm Delete"),
+                message: Text("Are you sure you want to delete this ride?"),
+                primaryButton: .destructive(Text("Delete")) {
+                    onDelete(ride2)
+                },
+                secondaryButton: .cancel()
+            )
+        }
     }
 }
 

@@ -22,7 +22,7 @@ struct TabController: View {
 
             Activity()
                 .tabItem {
-                    Label("Activity", systemImage: "person.bubble.fill")
+                    Label("Activity", systemImage: "exclamationmark.bubble")
                 }
             MyProfile()
                 .tabItem {
