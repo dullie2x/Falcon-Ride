@@ -12,7 +12,7 @@ import FirebaseAuth
 struct EditReserve: View {
     @Binding var ride: Ride
     var rideType: RideType
-
+    
     @State private var fromLocation: String = ""
     @State private var toLocation: String = ""
     @State private var seats: String = ""
@@ -23,7 +23,7 @@ struct EditReserve: View {
     @State private var showAlert: Bool = false
     @State private var alertMessage: String = ""
     @Environment(\.presentationMode) var presentationMode
-
+    
     init(ride: Binding<Ride>, rideType: RideType) {
         self._ride = ride
         self.rideType = rideType
@@ -42,8 +42,8 @@ struct EditReserve: View {
             self._selectedDate = State(initialValue: Date())
         }
     }
-
-
+    
+    
     var body: some View {
         NavigationView {
             Form {
@@ -77,20 +77,28 @@ struct EditReserve: View {
             }
         }
     }
-
+    
     func updateRide() {
         posting = true
-
-        let isoFormatter = ISO8601DateFormatter()
-        isoFormatter.formatOptions = [.withInternetDateTime]
-        let formattedDateTime = isoFormatter.string(from: selectedDate)
-
+        
+        // Format the date in UTC for Firebase
+        let isoDateFormatter = ISO8601DateFormatter()
+        isoDateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        isoDateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        let formattedDate = isoDateFormatter.string(from: selectedDate)
+        
+        // Format the time in the user's local time zone
+        let timeFormatter = DateFormatter()
+        timeFormatter.dateStyle = .none
+        timeFormatter.timeStyle = .short
+        let formattedTime = timeFormatter.string(from: selectedDate)
+        
         let rideDict: [String: Any] = [
             "fromLocation": fromLocation,
             "toLocation": toLocation,
             "seats": seats,
-            "date": formattedDateTime,
-            "time": formatTime(time: selectedDate),
+            "date": formattedDate, // UTC formatted date
+            "time": formattedTime, // Local time as string
             "donationRequested": donationRequested,
             "additionalInfo": additionalInfo
         ]
@@ -108,12 +116,6 @@ struct EditReserve: View {
                 presentationMode.wrappedValue.dismiss()
             }
         }
-    }
-
-    private func formatTime(time: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        return formatter.string(from: time)
     }
 }
 

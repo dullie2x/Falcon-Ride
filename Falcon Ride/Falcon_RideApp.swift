@@ -12,15 +12,20 @@ import FirebaseMessaging
 import UserNotifications
 import FirebaseAuth
 
+
+
 // AppDelegate to initialize Firebase and set up push notifications
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate, MessagingDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         FirebaseApp.configure()
-        
+        print("Firebase has been configured")
+
         // Set up push notifications
         UNUserNotificationCenter.current().delegate = self
         let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-        UNUserNotificationCenter.current().requestAuthorization(options: authOptions) { _, _ in }
+        UNUserNotificationCenter.current().requestAuthorization(options: authOptions) { granted, error in
+            print("Notification permission granted: \(granted), Error: \(String(describing: error))")
+        }
         application.registerForRemoteNotifications()
 
         Messaging.messaging().delegate = self
@@ -28,29 +33,43 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         return true
     }
 
-    // Handle updated FCM token
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        let tokenParts = deviceToken.map { data in String(format: "%02.2hhx", data) }
+        let token = tokenParts.joined()
+        print("Device Token: \(token)")
+    }
+
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("Failed to register for remote notifications: \(error.localizedDescription)")
+    }
+
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         print("Firebase registration token: \(String(describing: fcmToken))")
         let dataDict: [String: String] = ["token": fcmToken ?? ""]
         NotificationCenter.default.post(name: Notification.Name("FCMToken"), object: nil, userInfo: dataDict)
-        // TODO: If necessary, send token to application server.
-        // For testing purposes, you can show the token in a toast or alert
         if let token = fcmToken {
-            DispatchQueue.main.async {
-                // Display the token to the user or log it
-                print("FCM Token: \(token)")
-            }
+            print("FCM Token: \(token)")
         }
     }
 
-    // Receive displayed notifications for iOS 10 devices.
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        print("Received notification in foreground: \(notification.request.content.userInfo)")
         completionHandler([.banner, .sound])
     }
 
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        // Handle the notification response
+        print("Received notification response: \(response.notification.request.content.userInfo)")
         completionHandler()
+    }
+
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        Messaging.messaging().token { token, error in
+            if let error = error {
+                print("Error fetching FCM registration token: \(error)")
+            } else if let token = token {
+                print("FCM registration token: \(token)")
+            }
+        }
     }
 }
 
@@ -76,15 +95,5 @@ class AuthenticationViewModel: ObservableObject {
         Auth.auth().addStateDidChangeListener { [weak self] _, user in
             self?.isUserAuthenticated = (user != nil)
         }
-    }
-}
-func applicationDidBecomeActive(_ application: UIApplication) {
-    Messaging.messaging().token { token, error in
-      if let error = error {
-        print("Error fetching FCM registration token: \(error)")
-      } else if let token = token {
-        print("FCM registration token: \(token)")
-        // TODO: If necessary, send token to application server.
-      }
     }
 }

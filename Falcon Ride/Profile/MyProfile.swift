@@ -62,6 +62,12 @@ struct MyProfile: View {
                     .foregroundColor(.gray)
                     .padding(.bottom, 20)
                     .frame(maxWidth: 300, alignment: .center)
+                Text("Ver 1.01")
+                    .multilineTextAlignment(.center)
+                    .font(.subheadline)
+                    .foregroundColor(.darkBlue)
+                    .padding(.bottom, 20)
+                    .frame(maxWidth: 300, alignment: .center)
 
                 NavigationLink(destination: Settings(), isActive: $navigateToSettings) { EmptyView() }
             }

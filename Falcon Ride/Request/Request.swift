@@ -264,7 +264,7 @@ struct RideCell2: View {
                         Spacer() // Spacer to push the button to the right
                         
                         // Delete button at the bottom
-                        Button(action: { onDelete(ride2) }) {
+                        Button(action: { showingDeleteAlert = true }) {
                             Image(systemName: "trash")
                                 .foregroundColor(.white)
                                 .padding(10)

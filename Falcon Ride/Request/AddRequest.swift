@@ -70,18 +70,25 @@ struct AddRequestView: View {
 
         posting = true
 
+        // Format time in user's local time zone
         let timeFormatter = DateFormatter()
         timeFormatter.dateStyle = .none
         timeFormatter.timeStyle = .short
         let timeString = timeFormatter.string(from: selectedDate)
+
+        // Format date in UTC for Firebase
+        let isoDateFormatter = ISO8601DateFormatter()
+        isoDateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        isoDateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        let dateString = isoDateFormatter.string(from: selectedDate)
 
         let requestDict: [String: Any] = [
             "userID": userID,
             "fromLocation": fromLocation,
             "toLocation": toLocation,
             "seats": seats,
-            "time": timeString,
-            "date": ISO8601DateFormatter().string(from: selectedDate),
+            "time": timeString, // Local time as string
+            "date": dateString, // UTC formatted date
             "donationRequested": donationRequested,
             "additionalInfo": additionalInfo
         ]
@@ -100,6 +107,7 @@ struct AddRequestView: View {
             }
         }
     }
+
 
     func resetForm() {
         fromLocation = ""

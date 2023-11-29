@@ -174,28 +174,38 @@ struct Reserve: View {
         }
     }
 }
-
 func formatDate(dateString: String) -> String {
-    let dateFormatter = ISO8601DateFormatter()
-    dateFormatter.formatOptions = [.withFullDate, .withDashSeparatorInDate]
-    if let date = dateFormatter.date(from: dateString) {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        return formatter.string(from: date)
+    let isoDateFormatter = ISO8601DateFormatter()
+    isoDateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+    isoDateFormatter.timeZone = TimeZone(secondsFromGMT: 0) // UTC
+
+    if let date = isoDateFormatter.date(from: dateString) {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeZone = TimeZone.current // Convert to local time zone
+        return dateFormatter.string(from: date)
+    } else {
+        // Fallback for different date format or non-standard format
+        // You can adjust this part based on the specific format of your old dates
+        let fallbackFormatter = DateFormatter()
+        fallbackFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'" // Adjust this format as needed
+        fallbackFormatter.timeZone = TimeZone(secondsFromGMT: 0) // UTC
+
+        if let fallbackDate = fallbackFormatter.date(from: dateString) {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateStyle = .medium
+            dateFormatter.timeZone = TimeZone.current // Convert to local time zone
+            return dateFormatter.string(from: fallbackDate)
+        }
     }
-    return dateString
+    return dateString // Return original string if parsing fails
 }
 
-func formatTime(timeString: String) -> String {
-    let timeFormatter = ISO8601DateFormatter()
-    timeFormatter.formatOptions = [.withTime, .withColonSeparatorInTime]
-    if let time = timeFormatter.date(from: timeString) {
-        let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        return formatter.string(from: time)
+
+    func formatTime(timeString: String) -> String {
+        return timeString
     }
-    return timeString
-}
+
 
 private func configureNavigationBarAppearance() {
     let appearance = UINavigationBarAppearance()

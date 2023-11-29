@@ -82,16 +82,24 @@ struct EditRequest: View {
     func updateRide() {
         posting = true
         
-        let isoFormatter = ISO8601DateFormatter()
-        isoFormatter.formatOptions = [.withInternetDateTime]
-        let formattedDateTime = isoFormatter.string(from: selectedDate)
+        // Format the date in UTC for Firebase
+        let isoDateFormatter = ISO8601DateFormatter()
+        isoDateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        isoDateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        let formattedDate = isoDateFormatter.string(from: selectedDate)
+        
+        // Format the time in the user's local time zone
+        let timeFormatter = DateFormatter()
+        timeFormatter.dateStyle = .none
+        timeFormatter.timeStyle = .short
+        let formattedTime = timeFormatter.string(from: selectedDate)
         
         let rideDict: [String: Any] = [
             "fromLocation": fromLocation,
             "toLocation": toLocation,
             "seats": seats,
-            "date": formattedDateTime,
-            "time": formatTime(time: selectedDate),
+            "date": formattedDate, // UTC formatted date
+            "time": formattedTime, // Local time as string
             "donationRequested": donationRequested,
             "additionalInfo": additionalInfo
         ]
@@ -110,13 +118,8 @@ struct EditRequest: View {
             }
         }
     }
-    
-    private func formatTime(time: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        return formatter.string(from: time)
-    }
 }
+
 
 // Example usage preview
 struct EditRequest_Previews: PreviewProvider {

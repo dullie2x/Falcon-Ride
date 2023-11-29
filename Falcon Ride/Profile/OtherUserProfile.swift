@@ -29,8 +29,14 @@ struct OtherUserProfile: View {
                         .padding()
                 }
                 
-                Text("\"\(additionalInfo)\"") // Display additionalInfo
-                          .padding()
+                ScrollView(.vertical, showsIndicators: false) {
+                    Text("\"\(additionalInfo)\"")
+                        .frame(maxWidth: .infinity) // ensures full width utilization
+                        .multilineTextAlignment(.center) // center alignment
+                        .font(.system(size: 16)) // or use dynamic type like .body
+                        .padding() // add padding to give some space around the text
+                }
+                .padding(.horizontal)
                 
                 Stepper("Number of Seats: \(viewModel.numberOfSeatsToBook)", value: $viewModel.numberOfSeatsToBook, in: 1...10)
                     .padding(50)
