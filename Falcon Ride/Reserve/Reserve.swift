@@ -389,23 +389,83 @@ struct FilterView: View {
 
     var body: some View {
         VStack {
-            Toggle("Show Available Rides Only", isOn: $filterAvailableRides)
+            Text("Filter Rides")
+                .font(.title2)
+                .fontWeight(.bold)
                 .padding()
 
-            if let date = selectedDate {
-                DatePicker("Select Date", selection: Binding(get: { date }, set: { selectedDate = $0 }), displayedComponents: .date)
-                    .padding()
-                Button("Remove Date Filter") {
-                    selectedDate = nil
-                }
-                .padding()
-            } else {
-                DatePicker("Select Date", selection: Binding(get: { Date() }, set: { selectedDate = $0 }), displayedComponents: .date)
-                    .padding()
+            Toggle(isOn: $filterAvailableRides) {
+                Text("Show Available Rides Only")
+                    .font(.headline)
             }
+            .toggleStyle(CustomToggleStyle())
+            .padding()
+
+            DatePickerSection(selectedDate: $selectedDate)
+                .padding()
+
+            HStack {
+                Spacer()
+                Button(action: {
+                    selectedDate = nil
+                    filterAvailableRides = false
+                }) {
+                    Text("Clear All Filters")
+                        .fontWeight(.semibold)
+                        .padding()
+                        .background(Color.red.opacity(0.7))
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+                Spacer()
+            }
+            .padding()
+        }
+        .background(Color(.systemBackground))
+        .cornerRadius(12)
+        .padding()
+    }
+}
+
+struct CustomToggleStyle: ToggleStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        return HStack {
+            configuration.label
+            Spacer()
+            RoundedRectangle(cornerRadius: 16)
+                .fill(configuration.isOn ? Color.blue : Color.gray)
+                .frame(width: 51, height: 31)
+                .overlay(
+                    Circle()
+                        .fill(Color.white)
+                        .padding(2)
+                        .offset(x: configuration.isOn ? 10 : -10)
+                )
+                .onTapGesture {
+                    configuration.isOn.toggle()
+                }
+                .animation(.easeInOut, value: configuration.isOn)
+        }
+        .padding()
+    }
+}
+
+struct DatePickerSection: View {
+    @Binding var selectedDate: Date?
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text("Select Date")
+                .font(.headline)
+                .padding(.bottom, 5)
+
+            DatePicker("", selection: Binding(get: { selectedDate ?? Date() }, set: { selectedDate = $0 }), displayedComponents: .date)
+                .datePickerStyle(CompactDatePickerStyle())
+                .padding()
         }
     }
 }
+
 
     struct Reserve_Previews: PreviewProvider {
         static var previews: some View {
