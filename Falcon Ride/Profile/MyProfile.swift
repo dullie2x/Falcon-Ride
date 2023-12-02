@@ -62,7 +62,7 @@ struct MyProfile: View {
                     .foregroundColor(.gray)
                     .padding(.bottom, 20)
                     .frame(maxWidth: 300, alignment: .center)
-                Text("Ver 1.01")
+                Text("Ver 1.02")
                     .multilineTextAlignment(.center)
                     .font(.subheadline)
                     .foregroundColor(.darkBlue)

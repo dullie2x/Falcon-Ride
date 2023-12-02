@@ -15,12 +15,13 @@
 		A01D500B2B0499EB00535DF1 /* AddRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01D500A2B0499EB00535DF1 /* AddRequest.swift */; };
 		A01D500D2B049D2E00535DF1 /* OtherUserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01D500C2B049D2E00535DF1 /* OtherUserProfile.swift */; };
 		A04D44482B06A10900B39A68 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A04D44472B06A10900B39A68 /* SplashView.swift */; };
-		A0687A9E2B07E43400A68BB8 /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0687A9D2B07E43400A68BB8 /* Login.swift */; };
 		A0687AA02B07E44200A68BB8 /* SignUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0687A9F2B07E44200A68BB8 /* SignUp.swift */; };
 		A0687AA22B07FE7100A68BB8 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0687AA12B07FE7100A68BB8 /* Settings.swift */; };
+		A06F21C92B1A479F00862C06 /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06F21C82B1A479F00862C06 /* Login.swift */; };
+		A06F21CB2B1A47B800862C06 /* RideInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06F21CA2B1A47B800862C06 /* RideInfo.swift */; };
+		A06F21CD2B1A4A3E00862C06 /* test.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06F21CC2B1A4A3E00862C06 /* test.swift */; };
 		A075E6252B0A44130025E928 /* DataHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A075E6242B0A44130025E928 /* DataHandler.swift */; };
 		A075E6272B0A70DC0025E928 /* ParentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A075E6262B0A70DC0025E928 /* ParentView.swift */; };
-		A0A7F8482B100AB2004CE458 /* RideInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A7F8472B100AB2004CE458 /* RideInfo.swift */; };
 		A0A7F84A2B102B73004CE458 /* EditReserve.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A7F8492B102B73004CE458 /* EditReserve.swift */; };
 		A0A7F84D2B106255004CE458 /* Activity.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A7F84C2B106255004CE458 /* Activity.swift */; };
 		A0C2F0A02B0291B700685DE5 /* Falcon_RideApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2F09F2B0291B700685DE5 /* Falcon_RideApp.swift */; };
@@ -92,12 +93,13 @@
 		A027198A2B16DE8A002B63F8 /* Falcon RideRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Falcon RideRelease.entitlements"; sourceTree = "<group>"; };
 		A027198D2B17418B002B63F8 /* Falcon Ride.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Falcon Ride.entitlements"; sourceTree = "<group>"; };
 		A04D44472B06A10900B39A68 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
-		A0687A9D2B07E43400A68BB8 /* Login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Login.swift; sourceTree = "<group>"; };
 		A0687A9F2B07E44200A68BB8 /* SignUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUp.swift; sourceTree = "<group>"; };
 		A0687AA12B07FE7100A68BB8 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+		A06F21C82B1A479F00862C06 /* Login.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Login.swift; sourceTree = "<group>"; };
+		A06F21CA2B1A47B800862C06 /* RideInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RideInfo.swift; sourceTree = "<group>"; };
+		A06F21CC2B1A4A3E00862C06 /* test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = test.swift; sourceTree = "<group>"; };
 		A075E6242B0A44130025E928 /* DataHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataHandler.swift; sourceTree = "<group>"; };
 		A075E6262B0A70DC0025E928 /* ParentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentView.swift; sourceTree = "<group>"; };
-		A0A7F8472B100AB2004CE458 /* RideInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideInfo.swift; sourceTree = "<group>"; };
 		A0A7F8492B102B73004CE458 /* EditReserve.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditReserve.swift; sourceTree = "<group>"; };
 		A0A7F84C2B106255004CE458 /* Activity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Activity.swift; sourceTree = "<group>"; };
 		A0C2F09C2B0291B600685DE5 /* Falcon Ride.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Falcon Ride.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -171,7 +173,7 @@
 			isa = PBXGroup;
 			children = (
 				A075E6242B0A44130025E928 /* DataHandler.swift */,
-				A0A7F8472B100AB2004CE458 /* RideInfo.swift */,
+				A06F21CA2B1A47B800862C06 /* RideInfo.swift */,
 			);
 			path = DataHandler;
 			sourceTree = "<group>";
@@ -258,7 +260,7 @@
 		A0C2F0C92B0294C500685DE5 /* Login */ = {
 			isa = PBXGroup;
 			children = (
-				A0687A9D2B07E43400A68BB8 /* Login.swift */,
+				A06F21C82B1A479F00862C06 /* Login.swift */,
 				A0687A9F2B07E44200A68BB8 /* SignUp.swift */,
 				A075E6262B0A70DC0025E928 /* ParentView.swift */,
 			);
@@ -306,6 +308,7 @@
 			isa = PBXGroup;
 			children = (
 				A0687AA12B07FE7100A68BB8 /* Settings.swift */,
+				A06F21CC2B1A4A3E00862C06 /* test.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -482,6 +485,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A06F21C92B1A479F00862C06 /* Login.swift in Sources */,
 				A01D500B2B0499EB00535DF1 /* AddRequest.swift in Sources */,
 				A0F0CF122B153224009B90F1 /* EditRequest.swift in Sources */,
 				A0687AA02B07E44200A68BB8 /* SignUp.swift in Sources */,
@@ -489,18 +493,18 @@
 				A0687AA22B07FE7100A68BB8 /* Settings.swift in Sources */,
 				A0C2F0A22B0291B700685DE5 /* ContentView.swift in Sources */,
 				A075E6272B0A70DC0025E928 /* ParentView.swift in Sources */,
-				A0A7F8482B100AB2004CE458 /* RideInfo.swift in Sources */,
 				A04D44482B06A10900B39A68 /* SplashView.swift in Sources */,
 				A0A7F84D2B106255004CE458 /* Activity.swift in Sources */,
+				A06F21CB2B1A47B800862C06 /* RideInfo.swift in Sources */,
 				A01D50072B0496F400535DF1 /* MyProfile.swift in Sources */,
 				A01D50052B0495B400535DF1 /* Request.swift in Sources */,
+				A06F21CD2B1A4A3E00862C06 /* test.swift in Sources */,
 				A01D50032B03E38700535DF1 /* Reserve.swift in Sources */,
 				A075E6252B0A44130025E928 /* DataHandler.swift in Sources */,
 				A0F0CF142B1539EC009B90F1 /* ActivityInfo.swift in Sources */,
 				A01D500D2B049D2E00535DF1 /* OtherUserProfile.swift in Sources */,
 				A0C2F0A02B0291B700685DE5 /* Falcon_RideApp.swift in Sources */,
 				A01666582B05283700C73157 /* TabController.swift in Sources */,
-				A0687A9E2B07E43400A68BB8 /* Login.swift in Sources */,
 				A01D50092B0499C700535DF1 /* Add.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -571,8 +575,8 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Apple Development: Abdulmalik Ariyo (X7KQFM8HX9)";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Distribution: Abdulmalik Ariyo (9YFR4MTQA7)";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -636,8 +640,8 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Apple Development: Abdulmalik Ariyo (X7KQFM8HX9)";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Distribution: Abdulmalik Ariyo (9YFR4MTQA7)";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -667,11 +671,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Falcon Ride/Falcon Ride.entitlements";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"Falcon Ride/Preview Content\"";
 				DEVELOPMENT_TEAM = 9YFR4MTQA7;
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 9YFR4MTQA7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
@@ -686,10 +690,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.01;
+				MARKETING_VERSION = 1.02;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.FalconRide.Falcon-Ride";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Push Noti Falcon";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -705,11 +709,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Falcon Ride/Falcon RideRelease.entitlements";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"Falcon Ride/Preview Content\"";
 				DEVELOPMENT_TEAM = 9YFR4MTQA7;
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 9YFR4MTQA7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
@@ -724,10 +728,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.01;
+				MARKETING_VERSION = 1.02;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.FalconRide.Falcon-Ride";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Push Noti Falcon";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -742,6 +746,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9YFR4MTQA7;
@@ -762,6 +767,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9YFR4MTQA7;
