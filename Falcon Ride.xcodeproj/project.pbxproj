@@ -22,6 +22,9 @@
 		A06F21CD2B1A4A3E00862C06 /* test.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06F21CC2B1A4A3E00862C06 /* test.swift */; };
 		A075E6252B0A44130025E928 /* DataHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A075E6242B0A44130025E928 /* DataHandler.swift */; };
 		A075E6272B0A70DC0025E928 /* ParentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A075E6262B0A70DC0025E928 /* ParentView.swift */; };
+		A07FBC802B1C45870001D084 /* ReservationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07FBC7F2B1C45870001D084 /* ReservationsView.swift */; };
+		A07FBC822B1C45950001D084 /* PostsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07FBC812B1C45950001D084 /* PostsView.swift */; };
+		A07FBC842B1C45A80001D084 /* RequestsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07FBC832B1C45A80001D084 /* RequestsView.swift */; };
 		A0A7F84A2B102B73004CE458 /* EditReserve.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A7F8492B102B73004CE458 /* EditReserve.swift */; };
 		A0A7F84D2B106255004CE458 /* Activity.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A7F84C2B106255004CE458 /* Activity.swift */; };
 		A0C2F0A02B0291B700685DE5 /* Falcon_RideApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2F09F2B0291B700685DE5 /* Falcon_RideApp.swift */; };
@@ -100,6 +103,9 @@
 		A06F21CC2B1A4A3E00862C06 /* test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = test.swift; sourceTree = "<group>"; };
 		A075E6242B0A44130025E928 /* DataHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataHandler.swift; sourceTree = "<group>"; };
 		A075E6262B0A70DC0025E928 /* ParentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentView.swift; sourceTree = "<group>"; };
+		A07FBC7F2B1C45870001D084 /* ReservationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReservationsView.swift; sourceTree = "<group>"; };
+		A07FBC812B1C45950001D084 /* PostsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostsView.swift; sourceTree = "<group>"; };
+		A07FBC832B1C45A80001D084 /* RequestsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestsView.swift; sourceTree = "<group>"; };
 		A0A7F8492B102B73004CE458 /* EditReserve.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditReserve.swift; sourceTree = "<group>"; };
 		A0A7F84C2B106255004CE458 /* Activity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Activity.swift; sourceTree = "<group>"; };
 		A0C2F09C2B0291B600685DE5 /* Falcon Ride.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Falcon Ride.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -290,6 +296,9 @@
 			children = (
 				A01D50062B0496F400535DF1 /* MyProfile.swift */,
 				A01D500C2B049D2E00535DF1 /* OtherUserProfile.swift */,
+				A07FBC7F2B1C45870001D084 /* ReservationsView.swift */,
+				A07FBC812B1C45950001D084 /* PostsView.swift */,
+				A07FBC832B1C45A80001D084 /* RequestsView.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -486,10 +495,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				A06F21C92B1A479F00862C06 /* Login.swift in Sources */,
+				A07FBC802B1C45870001D084 /* ReservationsView.swift in Sources */,
 				A01D500B2B0499EB00535DF1 /* AddRequest.swift in Sources */,
 				A0F0CF122B153224009B90F1 /* EditRequest.swift in Sources */,
+				A07FBC842B1C45A80001D084 /* RequestsView.swift in Sources */,
 				A0687AA02B07E44200A68BB8 /* SignUp.swift in Sources */,
 				A0A7F84A2B102B73004CE458 /* EditReserve.swift in Sources */,
+				A07FBC822B1C45950001D084 /* PostsView.swift in Sources */,
 				A0687AA22B07FE7100A68BB8 /* Settings.swift in Sources */,
 				A0C2F0A22B0291B700685DE5 /* ContentView.swift in Sources */,
 				A075E6272B0A70DC0025E928 /* ParentView.swift in Sources */,

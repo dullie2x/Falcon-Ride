@@ -59,7 +59,20 @@ struct Settings: View {
                     )
                 }
 
-                Spacer()
+                Group {
+                    Text("Contact Abdulmalik Ariyo on teams for any questions and feedback! Thank you!")
+                        .multilineTextAlignment(.center)
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                        .padding(.bottom, 20)
+                        .frame(maxWidth: 300, alignment: .center)
+                    Text("Ver 1.03")
+                        .multilineTextAlignment(.center)
+                        .font(.subheadline)
+                        .foregroundColor(.darkBlue)
+                        .padding(.bottom, 20)
+                        .frame(maxWidth: 300, alignment: .center)
+                }
             }
             .navigationBarTitle("Settings", displayMode: .inline)
         }
