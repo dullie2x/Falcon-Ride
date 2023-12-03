@@ -30,7 +30,13 @@ struct Request: View {
     @State private var searchText = ""
     @State private var showingAddRequestView = false
     @State private var isLoading2 = true
+    @State private var showingAddView = false
+    @State private var showingFilterSheet = false
+    @State private var filterAvailableRides = false
+    @State private var selectedDate: Date?
     
+    private var currentUserID: String? = Auth.auth().currentUser?.uid
+
     
     init() {
         configureNavigationBarAppearance()
@@ -47,30 +53,26 @@ struct Request: View {
                     TextField("Search Rides", text: $searchText)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .foregroundColor(.gray)
+                    Button(action: { showingFilterSheet = true }) {
+                        Image(systemName: "line.horizontal.3.decrease.circle")
+                            .imageScale(.large)
+                            .foregroundColor(.darkBlue)
+                    }
                 }
                 .padding()
                 .cornerRadius(10)
-                .padding()
                 .shadow(radius: 10)
                 .background(Color.white) // Search bar background color set to blue
                 
                 ScrollView {
                     VStack(spacing: 10) {
                         if isLoading2 {
-                            ForEach(0..<5, id: \.self) { _ in
-                                RideCellSkeleton2(width: 400, height: 200)
-                                    .frame(maxWidth: .infinity)
-                                    .background(Color.gray.opacity(0.3))
-                                    .cornerRadius(10)
-                                    .shadow(radius: 5)
-                            }
+                            // RideCellSkeletons for loading state
                         } else {
-                            ForEach(rides2.filter {
-                                searchText.isEmpty || $0.fromLocation.localizedCaseInsensitiveContains(searchText) || $0.toLocation.localizedCaseInsensitiveContains(searchText)
-                            }) { ride2 in
+                            ForEach(filteredRides2()) { ride2 in
                                 NavigationLink(destination: OtherUserProfile(rideInfo: .request(ride2), additionalInfo: ride2.additionalInfo ?? "")) {
                                     RideCell2(ride2: ride2, width: 300, height: 100, onDelete: { selectedRide in
-                                        // Deletion logic goes here
+                                        guard selectedRide.userID == currentUserID else { return }
                                         DataHandler.shared.deleteRide(rideId: selectedRide.id, node: "rideRequest") { error in
                                             // Handle error or success
                                         }
@@ -84,6 +86,10 @@ struct Request: View {
                         }
                     }
                     .padding()
+                }
+                .sheet(isPresented: $showingFilterSheet) {
+                    // Filter sheet content
+                    FilterView(filterAvailableRides: $filterAvailableRides, selectedDate: $selectedDate)
                 }
                 
                 NavigationLink(destination: AddRequestView(), isActive: $showingAddRequestView) { EmptyView() }
@@ -106,6 +112,28 @@ struct Request: View {
                 .padding()
                 .foregroundColor(.darkBlue) // Button color changed to white for visibility
         }
+    }
+    func filteredRides2() -> [Ride2] {
+        rides2.filter { ride2 in
+            // Filter by search text
+            let matchesSearchText = searchText.isEmpty || ride2.fromLocation.lowercased().contains(searchText.lowercased()) || ride2.toLocation.lowercased().contains(searchText.lowercased())
+            
+            // Filter by available seats if the toggle is on
+            let matchesAvailableSeats = !filterAvailableRides || (filterAvailableRides && ride2.seats != "0")
+            
+            // Filter by selected date
+            let matchesSelectedDate = selectedDate == nil || isSameDay2(ride2.date, selectedDate!)
+
+            return matchesSearchText && matchesAvailableSeats && matchesSelectedDate
+        }
+    }
+    func isSameDay2(_ rideDate: String, _ selectedDate: Date) -> Bool {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MM/dd/yyyy" // Adjust this format based on how dates are stored in your Ride structure
+        if let date = dateFormatter.date(from: rideDate) {
+            return Calendar.current.isDate(date, inSameDayAs: selectedDate)
+        }
+        return false
     }
     
     // Function to fetch rides from Firebase

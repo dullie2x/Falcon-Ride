@@ -114,11 +114,21 @@ struct Reserve: View {
     }
 
     func filteredRides() -> [Ride] {
-        return rides.filter { ride in
-            (!filterAvailableRides || (filterAvailableRides && ride.seats != "0")) &&
-            (selectedDate == nil || isSameDay(ride.date, selectedDate!))
+        rides.filter { ride in
+            // Filter by search text
+            let matchesSearchText = searchText.isEmpty || ride.fromLocation.lowercased().contains(searchText.lowercased()) || ride.toLocation.lowercased().contains(searchText.lowercased())
+            
+            // Filter by available seats if the toggle is on
+            let matchesAvailableSeats = !filterAvailableRides || (filterAvailableRides && ride.seats != "0")
+            
+            // Filter by selected date
+            let matchesSelectedDate = selectedDate == nil || isSameDay(ride.date, selectedDate!)
+
+            return matchesSearchText && matchesAvailableSeats && matchesSelectedDate
         }
     }
+
+
 
     func isSameDay(_ rideDate: String, _ selectedDate: Date) -> Bool {
         let dateFormatter = DateFormatter()
@@ -388,44 +398,45 @@ struct FilterView: View {
     @Binding var selectedDate: Date?
 
     var body: some View {
-        VStack {
+        VStack(spacing: 20) { // Increased spacing for better separation of elements
             Text("Filter Rides")
                 .font(.title2)
                 .fontWeight(.bold)
-                .padding()
+                .padding(.top) // Padding at the top for spacing
 
             Toggle(isOn: $filterAvailableRides) {
                 Text("Show Available Rides Only")
                     .font(.headline)
             }
-            .toggleStyle(CustomToggleStyle())
-            .padding()
+            .toggleStyle(SwitchToggleStyle(tint: .blue)) // Switch style toggle for a more standard look
+            .padding(.horizontal) // Horizontal padding for alignment
 
-            DatePickerSection(selectedDate: $selectedDate)
-                .padding()
+            DatePicker("Select Date", selection: Binding(get: { selectedDate ?? Date() }, set: { selectedDate = $0 }), displayedComponents: .date)
+                .datePickerStyle(GraphicalDatePickerStyle()) // Graphical style for a more user-friendly interface
+                .padding(.horizontal) // Horizontal padding for alignment
 
             HStack {
-                Spacer()
                 Button(action: {
-                    selectedDate = nil
                     filterAvailableRides = false
+                    selectedDate = nil
                 }) {
-                    Text("Clear All Filters")
+                    Text("Clear Filters")
                         .fontWeight(.semibold)
+                        .frame(minWidth: 0, maxWidth: .infinity)
                         .padding()
-                        .background(Color.red.opacity(0.7))
                         .foregroundColor(.white)
+                        .background(Color.red.opacity(0.7))
                         .cornerRadius(8)
                 }
-                Spacer()
             }
-            .padding()
+            .padding(.horizontal) // Horizontal padding for alignment
         }
-        .background(Color(.systemBackground))
-        .cornerRadius(12)
-        .padding()
+        .padding() // Padding around the entire VStack
+        .background(Color(.systemBackground)) // Background color for the view
+        .cornerRadius(12) // Rounded corners for the view
     }
 }
+
 
 struct CustomToggleStyle: ToggleStyle {
     func makeBody(configuration: Configuration) -> some View {
