@@ -50,7 +50,7 @@ struct Request: View {
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.darkBlue)
-                    TextField("Search Rides", text: $searchText)
+                    TextField("Rides", text: $searchText)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .foregroundColor(.gray)
                     Button(action: { showingFilterSheet = true }) {

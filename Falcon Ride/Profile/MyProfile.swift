@@ -58,9 +58,9 @@ struct MyProfile: View {
                         // Segmented Control
                         Picker("Options", selection: $selectedSegment) {
                             Text("Reservations").tag(0)
-                            Text("My Rides").tag(1)
-                            Text("My Requests").tag(2)
-                            Text("Accepted Req.").tag(3)
+                            Text("Rides").tag(1)
+                            Text("Requests").tag(2)
+//                            Text("Accepted Req.").tag(3)
                         }
                         .pickerStyle(SegmentedPickerStyle())
                         .padding()
@@ -73,8 +73,8 @@ struct MyProfile: View {
                             PostsView()// Placeholder for PostsView
                         case 2:
                             RequestsView() // Placeholder for RequestsView
-                        case 3:
-                            PostsView()
+//                        case 3:
+//                            PostsView()
                         default:
                             EmptyView()
                         }

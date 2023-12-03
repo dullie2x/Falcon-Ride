@@ -48,7 +48,7 @@ struct Reserve: View {
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.darkBlue)
-                    TextField("Search Rides", text: $searchText)
+                    TextField("Search", text: $searchText)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .foregroundColor(.gray)
 
@@ -93,7 +93,7 @@ struct Reserve: View {
                 
                 NavigationLink(destination: AddView(), isActive: $showingAddView) { EmptyView() }
             }
-            .navigationBarTitle("Posted Rides", displayMode: .automatic)
+            .navigationBarTitle("Rides", displayMode: .automatic)
             .navigationBarItems(trailing: addButton)
             .background(Color.white)
             .onAppear(perform: fetchRides)

@@ -10,21 +10,24 @@ import SwiftUI
 import FirebaseDatabase
 import FirebaseAuth
 
-struct Ride5: Identifiable {
-    var id: String
-    var userID: String
-    var fromLocation: String
-    var toLocation: String
-    var seats: String
-    var date: String
-    var time: String
-    var donationRequested: String
-    var additionalInfo: String?
-}
+//struct Ride5: Identifiable {
+//    var id: String
+//    var userID: String
+//    var fromLocation: String
+//    var toLocation: String
+//    var seats: String
+//    var date: String
+//    var time: String
+//    var donationRequested: String
+//    var additionalInfo: String?
+//}
 
 struct RequestsCell: View {
-    var request: Ride5
-
+    var request: Ride2
+    var onDelete: (Ride2) -> Void
+    @State private var isEditing = false
+    @State private var showingDeleteAlert = false
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
@@ -76,11 +79,51 @@ struct RequestsCell: View {
         .cornerRadius(15)
         .shadow(color: Color.gray.opacity(0.4), radius: 5, x: 0, y: 2)
         .padding([.top, .horizontal])
+        .overlay(
+            VStack {
+                if request.userID == Auth.auth().currentUser?.uid {
+                    HStack {
+                        Spacer()
+                        Button(action: { isEditing = true }) {
+                            Image(systemName: "pencil")
+                                .foregroundColor(.white)
+                                .padding(10)
+                                .background(Color.blue)
+                                .clipShape(Circle())
+                        }
+                        NavigationLink(destination: EditRequest(ride2: Binding.constant(request), rideType: .request), isActive: $isEditing) { EmptyView() }
+                    }
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        Button(action: { showingDeleteAlert = true }) {
+                            Image(systemName: "trash")
+                                .foregroundColor(.white)
+                                .padding(10)
+                                .background(Color.red)
+                                .clipShape(Circle())
+                        }
+                    }
+                }
+            }
+            .padding(),
+            alignment: .topTrailing
+        )
+        .alert(isPresented: $showingDeleteAlert) {
+            Alert(
+                title: Text("Confirm Delete"),
+                message: Text("Are you sure you want to delete this ride?"),
+                primaryButton: .destructive(Text("Delete")) {
+                    onDelete(request)
+                },
+                secondaryButton: .cancel()
+            )
+        }
     }
 }
 
 struct RequestsView: View {
-    @State private var userRequests = [Ride5]()
+    @State private var userRequests = [Ride2]()
     @State private var isLoading = true
 
     private func fetchUserRequests() {
@@ -98,7 +141,7 @@ struct RequestsView: View {
                 return
             }
 
-            var newUserRequests: [Ride5] = []
+            var newUserRequests: [Ride2] = []
 
             for child in snapshot.children.allObjects as! [DataSnapshot] {
                 let id = child.key
@@ -118,7 +161,7 @@ struct RequestsView: View {
                 let formattedDate = formatDate(dateString: dateString)
                 let formattedTime = formatTime(timeString: timeString)
 
-                let request = Ride5(id: id, userID: userID, fromLocation: fromLocation, toLocation: toLocation, seats: seats, date: formattedDate, time: formattedTime, donationRequested: donationRequested, additionalInfo: additionalInfo)
+                let request = Ride2(id: id, userID: userID, fromLocation: fromLocation, toLocation: toLocation, seats: seats, date: formattedDate, time: formattedTime, donationRequested: donationRequested, additionalInfo: additionalInfo)
                 newUserRequests.append(request)
             }
 
@@ -162,17 +205,28 @@ struct RequestsView: View {
         ScrollView {
             VStack {
                 if isLoading {
-                    Text("Loading user requests...")
+                    Text("Loading posted requests...")
+                        .frame(maxWidth: .infinity, alignment: .center)
                 } else if userRequests.isEmpty {
-                    Text("No user requests available.")
+                    Text("Nothing here, but mitches anyone?")
                         .font(.title)
                         .foregroundColor(.gray)
                         .padding()
+                        .frame(maxWidth: .infinity, alignment: .center)
                 } else {
                     ForEach(userRequests) { request in
-                        RequestsCell(request: request)
-                            .padding(.horizontal, 15)
-                            .listRowInsets(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
+                        RequestsCell(request: request, onDelete: { selectedRide in
+                            guard selectedRide.userID == Auth.auth().currentUser?.uid else { return }
+                            DataHandler.shared.deleteRide(rideId: selectedRide.id, node: "rideRequest") { error in
+                                // Handle error or success
+                                // Optionally, remove the ride from the postedReserves array
+                                if error == nil {
+                                    userRequests.removeAll(where: { $0.id == selectedRide.id })
+                                }
+                            }
+                        })
+                        .padding(.horizontal, 15)
+                        .listRowInsets(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
                     }
                 }
             }

@@ -26,7 +26,7 @@ struct TabController: View {
                 }
             MyProfile()
                 .tabItem {
-                    Label("My Profile", systemImage: "person.crop.circle")
+                    Label("Profile", systemImage: "person.crop.circle")
                 }
         }
     }

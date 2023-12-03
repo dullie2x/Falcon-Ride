@@ -112,11 +112,13 @@ struct ReservationsView: View {
             VStack {
                 if isLoading {
                     Text("Loading reservations...")
+                        .frame(maxWidth: .infinity, alignment: .center)
                 } else if reservations.isEmpty {
-                    Text("Nothing here, bye")
+                    Text("Surprise! Nothing here!")
                         .font(.title)
                         .foregroundColor(.gray)
                         .padding()
+                        .frame(maxWidth: .infinity, alignment: .center)
                 } else {
                     ForEach(reservations) { reservation in
                         ReservationCell(reservation: reservation)
@@ -189,7 +191,7 @@ struct ReservationCell: View {
                 Image(systemName: "person.fill")
                     .foregroundColor(.secondary)
                     .font(.system(size: 20)) // Increase icon size
-                Text("Booker: \(reservation.ride3.userName ?? "Unknown")")
+                Text("User: \(reservation.ride3.userName ?? "Unknown")")
                     .font(.subheadline)
                     .foregroundColor(.gray)
             }
@@ -198,9 +200,16 @@ struct ReservationCell: View {
                 Image(systemName: "phone.fill")
                     .foregroundColor(.secondary)
                     .font(.system(size: 20)) // Increase icon size
-                Text("Contact: \(reservation.ride3.userNumber ?? "Unknown")")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
+                if let userNumber = reservation.ride3.userNumber {
+                    // Create a link to send a message
+                    Link("Contact: \(userNumber)", destination: URL(string: "sms:\(userNumber)")!)
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                } else {
+                    Text("Contact: Unknown")
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                }
             }
         }
         .padding(10) // Increase padding
@@ -210,6 +219,8 @@ struct ReservationCell: View {
         .padding([.top, .horizontal]) // Add more horizontal padding and separate from the top
     }
 }
+
+
 
 struct ReservationsView_Previews: PreviewProvider {
     static var previews: some View {
