@@ -66,7 +66,7 @@ struct Settings: View {
                         .foregroundColor(.gray)
                         .padding(.bottom, 20)
                         .frame(maxWidth: 300, alignment: .center)
-                    Text("Ver 1.03")
+                    Text("Ver 1.04")
                         .multilineTextAlignment(.center)
                         .font(.subheadline)
                         .foregroundColor(.darkBlue)

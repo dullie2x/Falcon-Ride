@@ -15,3 +15,9 @@ enum RideType {
     case reserve, request
 }
 
+enum ReservationType {
+    case booked(Reservation)
+    case acceptedRequest(Reservation)
+}
+
+
