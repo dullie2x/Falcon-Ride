@@ -27,6 +27,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
             print("Notification permission granted: \(granted), Error: \(String(describing: error))")
         }
         application.registerForRemoteNotifications()
+        application.applicationIconBadgeNumber = 0
 
         Messaging.messaging().delegate = self
 
@@ -58,11 +59,14 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     }
 
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        UIApplication.shared.applicationIconBadgeNumber = 0
         print("Received notification response: \(response.notification.request.content.userInfo)")
         completionHandler()
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
+        application.applicationIconBadgeNumber = 1
+        application.applicationIconBadgeNumber = 0
         Messaging.messaging().token { token, error in
             if let error = error {
                 print("Error fetching FCM registration token: \(error)")

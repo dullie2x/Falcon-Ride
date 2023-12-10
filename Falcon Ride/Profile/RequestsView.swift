@@ -5,26 +5,15 @@
 //  Created by Abdulmalik Ariyo on 12/2/23.
 //
 
-// RequestsView.swift
 import SwiftUI
 import FirebaseDatabase
 import FirebaseAuth
 
-//struct Ride5: Identifiable {
-//    var id: String
-//    var userID: String
-//    var fromLocation: String
-//    var toLocation: String
-//    var seats: String
-//    var date: String
-//    var time: String
-//    var donationRequested: String
-//    var additionalInfo: String?
-//}
-
 struct RequestsCell: View {
     var request: Ride2
     var onDelete: (Ride2) -> Void
+    var width: CGFloat
+    var height: CGFloat
     @State private var isEditing = false
     @State private var showingDeleteAlert = false
     
@@ -43,10 +32,10 @@ struct RequestsCell: View {
                         .foregroundColor(.gray)
                 }
             }
-
+            
             Divider()
                 .background(Color.gray)
-
+            
             HStack {
                 Image(systemName: "person.fill")
                     .foregroundColor(.secondary)
@@ -55,7 +44,7 @@ struct RequestsCell: View {
                     .font(.subheadline)
                     .foregroundColor(.gray)
             }
-
+            
             HStack {
                 Image(systemName: "phone.fill")
                     .foregroundColor(.secondary)
@@ -64,7 +53,7 @@ struct RequestsCell: View {
                     .font(.subheadline)
                     .foregroundColor(.gray)
             }
-
+            
             HStack {
                 Image(systemName: "info.circle.fill")
                     .foregroundColor(.secondary)
@@ -79,6 +68,7 @@ struct RequestsCell: View {
         .cornerRadius(15)
         .shadow(color: Color.gray.opacity(0.4), radius: 5, x: 0, y: 2)
         .padding([.top, .horizontal])
+        .frame(width: width, height: height)
         .overlay(
             VStack {
                 if request.userID == Auth.auth().currentUser?.uid {
@@ -106,7 +96,7 @@ struct RequestsCell: View {
                     }
                 }
             }
-            .padding(),
+                .padding(),
             alignment: .topTrailing
         )
         .alert(isPresented: $showingDeleteAlert) {
@@ -125,85 +115,12 @@ struct RequestsCell: View {
 struct RequestsView: View {
     @State private var userRequests = [Ride2]()
     @State private var isLoading = true
-
-    private func fetchUserRequests() {
-        guard let currentUserID = Auth.auth().currentUser?.uid else {
-            print("User not logged in")
-            self.isLoading = false
-            return
-        }
-
-        let ref = Database.database().reference().child("rideRequest")
-
-        ref.observeSingleEvent(of: .value) { snapshot in
-            guard snapshot.exists() else {
-                self.isLoading = false
-                return
-            }
-
-            var newUserRequests: [Ride2] = []
-
-            for child in snapshot.children.allObjects as! [DataSnapshot] {
-                let id = child.key
-                guard let requestDict = child.value as? [String: Any],
-                      let userID = requestDict["userID"] as? String,
-                      userID == currentUserID, // Filter only the requests of the logged-in user
-                      let fromLocation = requestDict["fromLocation"] as? String,
-                      let toLocation = requestDict["toLocation"] as? String,
-                      let seats = requestDict["seats"] as? String,
-                      let dateString = requestDict["date"] as? String,
-                      let timeString = requestDict["time"] as? String,
-                      let donationRequested = requestDict["donationRequested"] as? String,
-                      let additionalInfo = requestDict["additionalInfo"] as? String else {
-                    continue
-                }
-
-                let formattedDate = formatDate(dateString: dateString)
-                let formattedTime = formatTime(timeString: timeString)
-
-                let request = Ride2(id: id, userID: userID, fromLocation: fromLocation, toLocation: toLocation, seats: seats, date: formattedDate, time: formattedTime, donationRequested: donationRequested, additionalInfo: additionalInfo)
-                newUserRequests.append(request)
-            }
-
-            self.userRequests = newUserRequests
-            self.isLoading = false
-        }
-    }
-
-    // Add this function to format the date
-    func formatDate(dateString: String) -> String {
-        let isoDateFormatter = ISO8601DateFormatter()
-        isoDateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        isoDateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
-
-        if let date = isoDateFormatter.date(from: dateString) {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateStyle = .medium
-            dateFormatter.timeZone = TimeZone.current
-            return dateFormatter.string(from: date)
-        } else {
-            let fallbackFormatter = DateFormatter()
-            fallbackFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
-            fallbackFormatter.timeZone = TimeZone(secondsFromGMT: 0)
-
-            if let fallbackDate = fallbackFormatter.date(from: dateString) {
-                let dateFormatter = DateFormatter()
-                dateFormatter.dateStyle = .medium
-                dateFormatter.timeZone = TimeZone.current
-                return dateFormatter.string(from: fallbackDate)
-            }
-        }
-        return dateString
-    }
-
-    // Add this function to format the time
-    func formatTime(timeString: String) -> String {
-        return timeString
-    }
-
+    let segmentedViewWidth = UIScreen.main.bounds.width // Use segmentedViewWidth for consistency
+    
+    
     var body: some View {
         ScrollView {
-            VStack {
+            LazyVStack {
                 if isLoading {
                     Text("Loading posted requests...")
                         .frame(maxWidth: .infinity, alignment: .center)
@@ -218,20 +135,98 @@ struct RequestsView: View {
                         RequestsCell(request: request, onDelete: { selectedRide in
                             guard selectedRide.userID == Auth.auth().currentUser?.uid else { return }
                             DataHandler.shared.deleteRide(rideId: selectedRide.id, node: "rideRequest") { error in
-                                // Handle error or success
-                                // Optionally, remove the ride from the postedReserves array
                                 if error == nil {
                                     userRequests.removeAll(where: { $0.id == selectedRide.id })
                                 }
                             }
-                        })
+                        },
+                        width: segmentedViewWidth,
+                        height: 200
+                        )
                         .padding(.horizontal, 15)
                         .listRowInsets(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
                     }
+                    .frame(width: segmentedViewWidth) // Set the cell to full screen width
+                    .padding(.horizontal, 15)
                 }
             }
         }
         .onAppear(perform: fetchUserRequests)
+    }
+    
+    
+    private func fetchUserRequests() {
+        guard let currentUserID = Auth.auth().currentUser?.uid else {
+            print("User not logged in")
+            isLoading = false
+            return
+        }
+        
+        let ref = Database.database().reference().child("rideRequest")
+        
+        ref.observeSingleEvent(of: .value) { snapshot in
+            guard snapshot.exists() else {
+                isLoading = false
+                return
+            }
+            
+            var newUserRequests: [Ride2] = []
+            
+            for child in snapshot.children.allObjects as! [DataSnapshot] {
+                let id = child.key
+                guard let requestDict = child.value as? [String: Any],
+                      let userID = requestDict["userID"] as? String,
+                      userID == currentUserID,
+                      let fromLocation = requestDict["fromLocation"] as? String,
+                      let toLocation = requestDict["toLocation"] as? String,
+                      let seats = requestDict["seats"] as? String,
+                      let dateString = requestDict["date"] as? String,
+                      let timeString = requestDict["time"] as? String,
+                      let donationRequested = requestDict["donationRequested"] as? String,
+                      let additionalInfo = requestDict["additionalInfo"] as? String else {
+                    continue
+                }
+                
+                let formattedDate = formatDate(dateString: dateString)
+                let formattedTime = formatTime(timeString: timeString)
+                
+                let request = Ride2(id: id, userID: userID, fromLocation: fromLocation, toLocation: toLocation, seats: seats, date: formattedDate, time: formattedTime, donationRequested: donationRequested, additionalInfo: additionalInfo)
+                newUserRequests.append(request)
+            }
+            
+            userRequests = newUserRequests
+            isLoading = false
+        }
+    }
+    
+    
+    func formatDate(dateString: String) -> String {
+        let isoDateFormatter = ISO8601DateFormatter()
+        isoDateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        isoDateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        
+        if let date = isoDateFormatter.date(from: dateString) {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateStyle = .medium
+            dateFormatter.timeZone = TimeZone.current
+            return dateFormatter.string(from: date)
+        } else {
+            let fallbackFormatter = DateFormatter()
+            fallbackFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+            fallbackFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+            
+            if let fallbackDate = fallbackFormatter.date(from: dateString) {
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateStyle = .medium
+                dateFormatter.timeZone = TimeZone.current
+                return dateFormatter.string(from: fallbackDate)
+            }
+        }
+        return dateString
+    }
+    
+    func formatTime(timeString: String) -> String {
+        return timeString
     }
 }
 

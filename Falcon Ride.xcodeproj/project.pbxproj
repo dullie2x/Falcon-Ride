@@ -35,7 +35,6 @@
 		A0C2F0BB2B0291BA00685DE5 /* Falcon_RideUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2F0BA2B0291BA00685DE5 /* Falcon_RideUITests.swift */; };
 		A0C2F0BD2B0291BA00685DE5 /* Falcon_RideUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2F0BC2B0291BA00685DE5 /* Falcon_RideUITestsLaunchTests.swift */; };
 		A0F0CF122B153224009B90F1 /* EditRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F0CF112B153224009B90F1 /* EditRequest.swift */; };
-		A0F0CF142B1539EC009B90F1 /* ActivityInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F0CF132B1539EC009B90F1 /* ActivityInfo.swift */; };
 		A0FC6F432B096C7400E6085A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A0FC6F422B096C7300E6085A /* GoogleService-Info.plist */; };
 		A0FC6F442B096C7400E6085A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A0FC6F422B096C7300E6085A /* GoogleService-Info.plist */; };
 		A0FC6F452B096C7400E6085A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A0FC6F422B096C7300E6085A /* GoogleService-Info.plist */; };
@@ -119,7 +118,6 @@
 		A0C2F0BA2B0291BA00685DE5 /* Falcon_RideUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Falcon_RideUITests.swift; sourceTree = "<group>"; };
 		A0C2F0BC2B0291BA00685DE5 /* Falcon_RideUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Falcon_RideUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		A0F0CF112B153224009B90F1 /* EditRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditRequest.swift; sourceTree = "<group>"; };
-		A0F0CF132B1539EC009B90F1 /* ActivityInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityInfo.swift; sourceTree = "<group>"; };
 		A0FC6F422B096C7300E6085A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -188,7 +186,6 @@
 			isa = PBXGroup;
 			children = (
 				A0A7F84C2B106255004CE458 /* Activity.swift */,
-				A0F0CF132B1539EC009B90F1 /* ActivityInfo.swift */,
 			);
 			path = Activity;
 			sourceTree = "<group>";
@@ -513,7 +510,6 @@
 				A06F21CD2B1A4A3E00862C06 /* test.swift in Sources */,
 				A01D50032B03E38700535DF1 /* Reserve.swift in Sources */,
 				A075E6252B0A44130025E928 /* DataHandler.swift in Sources */,
-				A0F0CF142B1539EC009B90F1 /* ActivityInfo.swift in Sources */,
 				A01D500D2B049D2E00535DF1 /* OtherUserProfile.swift in Sources */,
 				A0C2F0A02B0291B700685DE5 /* Falcon_RideApp.swift in Sources */,
 				A01666582B05283700C73157 /* TabController.swift in Sources */,
@@ -685,7 +681,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Falcon Ride/Falcon Ride.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Falcon Ride/Preview Content\"";
 				DEVELOPMENT_TEAM = 9YFR4MTQA7;
 				ENABLE_PREVIEWS = YES;
@@ -702,7 +698,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.03;
+				MARKETING_VERSION = 1.04;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.FalconRide.Falcon-Ride";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -723,7 +719,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Falcon Ride/Falcon RideRelease.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Falcon Ride/Preview Content\"";
 				DEVELOPMENT_TEAM = 9YFR4MTQA7;
 				ENABLE_PREVIEWS = YES;
@@ -740,7 +736,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.03;
+				MARKETING_VERSION = 1.04;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.FalconRide.Falcon-Ride";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

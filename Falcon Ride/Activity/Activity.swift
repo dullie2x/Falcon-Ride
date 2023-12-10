@@ -6,10 +6,8 @@
 //
 
 import SwiftUI
-import Foundation
 import FirebaseDatabase
 import FirebaseAuth
-
 
 struct ActivityItem: Identifiable {
     let id = UUID()
@@ -47,7 +45,7 @@ class ActivityViewModel: ObservableObject {
                 let bookingKey = snapshot.key
 
                 group.enter()
-                usersRef.child(bookerUserID).observeSingleEvent(of: .value) { userSnapshot in
+                usersRef.child(bookerUserID).observeSingleEvent(of: .value) { (userSnapshot, _) in
                     var userName = "Unknown User"
                     var userNumber = "Unknown Number"
 
@@ -57,11 +55,19 @@ class ActivityViewModel: ObservableObject {
                     }
 
                     let rideNode = type == "reservation" ? "rideReserve" : "rideRequest"
-                    self.ref.child(rideNode).child(rideID).observeSingleEvent(of: .value) { rideSnapshot in
+                    self.ref.child(rideNode).child(rideID).observeSingleEvent(of: .value) { (rideSnapshot, _) in
                         if let rideDict = rideSnapshot.value as? [String: Any],
                            let dateTimeString = rideDict["date"] as? String {
                             let formattedDateTime = self.formatDateTime(dateTimeString: dateTimeString)
-                            let message = "\(userName) (\(userNumber)) \(type == "reservation" ? "booked a ride from you." : "fulfilled your ride request.")"
+                            var message = ""
+
+                            if type == "reservation" {
+                                message = "\(userName) (\(userNumber)) booked a ride from you."
+                            } else if type == "request" {
+                                message = "\(userName) (\(userNumber)) fulfilled your ride request."
+                            } else if type == "cancellation" {
+                                message = "\(userName) (\(userNumber)) cancelled a ride."
+                            }
 
                             let activity = ActivityItem(bookingKey: bookingKey, message: message, dateString: formattedDateTime)
                             newActivities.append(activity)
@@ -76,11 +82,32 @@ class ActivityViewModel: ObservableObject {
                     strongSelf.activities = newActivities.filter { !strongSelf.isDatePassed(dateString: $0.dateString) }
                 }
             }
+        }
+    }
 
+    private func fetchRideDetails(rideID: String, completion: @escaping (String, String) -> Void) {
+        let rideReserveRef = Database.database().reference().child("rideReserve").child(rideID)
+        let rideRequestRef = Database.database().reference().child("rideRequest").child(rideID)
+
+        rideReserveRef.observeSingleEvent(of: .value) { snapshot in
+            if let rideDict = snapshot.value as? [String: Any],
+               let date = rideDict["date"] as? String,
+               let time = rideDict["time"] as? String {
+                completion(date, time)
+            } else {
+                rideRequestRef.observeSingleEvent(of: .value) { snapshot in
+                    if let rideDict = snapshot.value as? [String: Any],
+                       let date = rideDict["date"] as? String,
+                       let time = rideDict["time"] as? String {
+                        completion(date, time)
+                    } else {
+                        completion("Date not found", "Time not found")
+                    }
+                }
             }
         }
+    }
     
-
     private func formatDateTime(dateTimeString: String) -> String {
         let isoFormatter = ISO8601DateFormatter()
         isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
@@ -111,7 +138,6 @@ class ActivityViewModel: ObservableObject {
         }
         return false
     }
-
     func deleteActivity(at offsets: IndexSet) {
         for index in offsets {
             let activity = activities[index]
@@ -121,7 +147,7 @@ class ActivityViewModel: ObservableObject {
     }
 }
 
-// SwiftUI View for displaying activities
+
 struct Activity: View {
     @StateObject private var viewModel = ActivityViewModel()
 
@@ -137,23 +163,25 @@ struct Activity: View {
                     List {
                         ForEach(viewModel.activities) { activity in
                             HStack(spacing: 15) {
-                                Image("logo1png") // Make sure this image exists in your assets
+                                Image("logo1png") // Replace with your asset
                                     .resizable()
                                     .frame(width: 50, height: 50)
                                     .foregroundColor(.blue)
                                     .padding(.leading, 5)
-                                
+
                                 VStack(alignment: .leading, spacing: 5) {
                                     Text(activity.message)
                                         .fontWeight(.semibold)
                                         .foregroundColor(Color.primary)
                                         .lineLimit(2)
                                         .multilineTextAlignment(.leading)
-                                    
+
                                     Text(activity.dateString)
                                         .font(.subheadline)
                                         .foregroundColor(.gray)
                                 }
+                                
+                                Spacer() // Add Spacer to push content to the left edge
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.vertical, 10)
@@ -170,7 +198,6 @@ struct Activity: View {
         }
     }
 }
-
 
 struct Activity_Previews: PreviewProvider {
     static var previews: some View {

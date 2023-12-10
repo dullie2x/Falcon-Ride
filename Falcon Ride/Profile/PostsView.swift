@@ -5,30 +5,15 @@
 //  Created by Abdulmalik Ariyo on 12/2/23.
 //
 
-// PostsView.swift
 import SwiftUI
 import FirebaseDatabase
 import FirebaseAuth
 
-//struct Ride: Identifiable {
-//    var id: String
-//    var userID: String
-//    var fromLocation: String
-//    var toLocation: String
-//    var seats: String
-//    var date: String
-//    var time: String
-//    var donationRequested: String
-//    var userEmail: String?
-//    var userName: String?
-//    var userUsername: String?
-//    var userNumber: String?
-//    var additionalInfo: String?
-//}
-
 struct PostsCell: View {
     var reservation: Ride
     var onDelete: (Ride) -> Void
+    var width: CGFloat
+    var height: CGFloat
     @State private var isEditing = false
     @State private var showingDeleteAlert = false
 
@@ -83,6 +68,7 @@ struct PostsCell: View {
         .cornerRadius(15)
         .shadow(color: Color.gray.opacity(0.4), radius: 5, x: 0, y: 2)
         .padding([.top, .horizontal])
+        .frame(width: width, height: height)
         .overlay(
             VStack {
                 if reservation.userID == Auth.auth().currentUser?.uid {
@@ -126,28 +112,66 @@ struct PostsCell: View {
     }
 }
 
-
 struct PostsView: View {
     @State private var postedReserves = [Ride]()
     @State private var isLoading = true
+    let segmentedViewWidth = UIScreen.main.bounds.width // Use segmentedViewWidth for consistency
+
+    var body: some View {
+        ScrollView {
+            LazyVStack {
+                if isLoading {
+                    Text("Loading posted rides...")
+                        .frame(maxWidth: .infinity, alignment: .center)
+                } else if postedReserves.isEmpty {
+                    Text("Nothing here, but how about that flyover huh?")
+                        .font(.title)
+                        .foregroundColor(.gray)
+                        .padding()
+                        .frame(maxWidth: .infinity, alignment: .center)
+                } else {
+                    ForEach(postedReserves) { reserve in
+                        PostsCell(
+                            reservation: reserve,
+                            onDelete: { selectedRide in
+                                guard selectedRide.userID == Auth.auth().currentUser?.uid else { return }
+                                DataHandler.shared.deleteRide(rideId: selectedRide.id, node: "rideReserve") { error in
+                                    if error == nil {
+                                        postedReserves.removeAll(where: { $0.id == selectedRide.id })
+                                    }
+                                }
+                            },
+                            width: segmentedViewWidth,
+                            height: 200 // Set height to 200
+                        )
+                        .padding(.horizontal, 15)
+                        .listRowInsets(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
+                    }
+                    .frame(width: segmentedViewWidth) // Set the cell to full screen width
+                    .padding(.horizontal, 15)
+                }
+            }
+        }
+        .onAppear(perform: fetchPostedReserves)
+    }
 
     private func fetchPostedReserves() {
         guard let currentUserID = Auth.auth().currentUser?.uid else {
             print("User not logged in")
-            self.isLoading = false
+            isLoading = false
             return
         }
-        
+
         let ref = Database.database().reference().child("rideReserve")
-        
+
         ref.observeSingleEvent(of: .value) { snapshot in
             guard snapshot.exists() else {
-                self.isLoading = false
+                isLoading = false
                 return
             }
-            
+
             var newPostedReserves: [Ride] = []
-            
+
             for child in snapshot.children.allObjects as! [DataSnapshot] {
                 let id = child.key
                 guard let rideDict = child.value as? [String: Any],
@@ -162,25 +186,25 @@ struct PostsView: View {
                       let additionalInfo = rideDict["additionalInfo"] as? String else {
                     continue
                 }
-                
+
                 let formattedDate = formatDate(dateString: dateString)
                 let formattedTime = formatTime(timeString: timeString)
-                
+
                 let ride = Ride(id: id, userID: userID, fromLocation: fromLocation, toLocation: toLocation, seats: seats, date: formattedDate, time: formattedTime, donationRequested: donationRequested, userEmail: "", userName: "", userUsername: "", userNumber: "", additionalInfo: additionalInfo)
                 newPostedReserves.append(ride)
             }
-            
-            self.postedReserves = newPostedReserves
-            self.isLoading = false
+
+            postedReserves = newPostedReserves
+            isLoading = false
         }
     }
 
-    // Add this function to format the date
+
     func formatDate(dateString: String) -> String {
         let isoDateFormatter = ISO8601DateFormatter()
         isoDateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         isoDateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
-        
+
         if let date = isoDateFormatter.date(from: dateString) {
             let dateFormatter = DateFormatter()
             dateFormatter.dateStyle = .medium
@@ -190,7 +214,7 @@ struct PostsView: View {
             let fallbackFormatter = DateFormatter()
             fallbackFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
             fallbackFormatter.timeZone = TimeZone(secondsFromGMT: 0)
-            
+
             if let fallbackDate = fallbackFormatter.date(from: dateString) {
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateStyle = .medium
@@ -200,45 +224,11 @@ struct PostsView: View {
         }
         return dateString
     }
-    
-    // Add this function to format the time
+
     func formatTime(timeString: String) -> String {
         return timeString
     }
-    
-    var body: some View {
-            ScrollView {
-                VStack {
-                    if isLoading {
-                        Text("Loading posted rides...")
-                            .frame(maxWidth: .infinity, alignment: .center)
-                    } else if postedReserves.isEmpty {
-                        Text("Nothing here, but how about that flyover huh?")
-                            .font(.title)
-                            .foregroundColor(.gray)
-                            .padding()
-                            .frame(maxWidth: .infinity, alignment: .center)
-                    } else {
-                        ForEach(postedReserves) { reserve in
-                            PostsCell(reservation: reserve, onDelete: { selectedRide in
-                                guard selectedRide.userID == Auth.auth().currentUser?.uid else { return }
-                                DataHandler.shared.deleteRide(rideId: selectedRide.id, node: "rideReserve") { error in
-                                    // Handle error or success
-                                    // Optionally, remove the ride from the postedReserves array
-                                    if error == nil {
-                                        postedReserves.removeAll(where: { $0.id == selectedRide.id })
-                                    }
-                                }
-                            })
-                            .padding(.horizontal, 15)
-                            .listRowInsets(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
-                        }
-                    }
-                }
-            }
-            .onAppear(perform: fetchPostedReserves)
-        }
-    }
+}
 
 struct PostsView_Previews: PreviewProvider {
     static var previews: some View {

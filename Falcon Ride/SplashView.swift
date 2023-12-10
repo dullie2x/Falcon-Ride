@@ -8,33 +8,15 @@
 import SwiftUI
 
 struct SplashView: View {
-    @State var isActive: Bool = false
-
     var body: some View {
-        // Full-screen ZStack to ensure the background covers everything
         ZStack {
-            Color.darkBlue // Set the background color here
-                .edgesIgnoringSafeArea(.all) // Make the background color extend to the edges of the screen
+            Color.darkBlue.edgesIgnoringSafeArea(.all) // Background color
 
-            VStack {
-                if self.isActive {
-                    // Replace with your home screen view
-                    TabController()
-                } else {
-                    // Replace "Logo1" with the name of your image asset
-                    Image("logo1png")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 200, height: 200)
-                }
-            }
-        }
-        .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-                withAnimation {
-                    self.isActive = true
-                }
-            }
+            // Splash logo
+            Image("logo1png")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 200, height: 200)
         }
     }
 }
@@ -49,6 +31,7 @@ extension Color {
 //        SplashView()
 //    }
 //}
+
 
 
 

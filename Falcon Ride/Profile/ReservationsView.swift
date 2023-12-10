@@ -24,15 +24,69 @@ struct Reservation: Identifiable {
     var bookerUserID: String
 }
 
+struct CustomAlertView: View {
+    @Binding var seatsToCancelInput: String
+    var onCancel: (Int) -> Void
+    var onDismiss: () -> Void
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            Text("Cancel Reservation")
+                .font(.headline)
+                .fontWeight(.bold)
+                .padding(.top, 20)
+            
+            Text("Enter the number of seats to cancel:")
+                .font(.subheadline)
+                .foregroundColor(.gray)
+            
+            TextField("Number of seats", text: $seatsToCancelInput)
+                .padding()
+                .background(Color.secondary.opacity(0.1))
+                .cornerRadius(10)
+                .keyboardType(.numberPad)
+            
+            HStack(spacing: 20) {
+                Button("Dismiss") {
+                    onDismiss()
+                }
+                .padding()
+                .foregroundColor(.white)
+                .background(Color.gray)
+                .cornerRadius(10)
+                
+                Button("Confirm") {
+                    if let seatsToCancel = Int(seatsToCancelInput) {
+                        onCancel(seatsToCancel)
+                    }
+                    onDismiss()
+                }
+                .padding()
+                .foregroundColor(.white)
+                .background(Color.blue)
+                .cornerRadius(10)
+            }
+            .padding(.bottom, 20)
+        }
+        .frame(width: 300)
+        .background(Color.clear)
+        .cornerRadius(15)
+    }
+}
+
 struct ReservationsView: View {
     @State private var reservations = [Reservation]()
     @State private var acceptedRequests = [Reservation]()
     @State private var isLoading = true
-    
-    
+    @State private var showingCustomAlert = false
+    @State private var seatsToCancelInput = ""
+    @State private var selectedReservation: Reservation?
+
+    let segmentedViewWidth = UIScreen.main.bounds.width
+
     var body: some View {
         ScrollView {
-            VStack {
+            LazyVStack {
                 if isLoading {
                     Text("Loading reservations & Accepted Requests...")
                         .frame(maxWidth: .infinity, alignment: .center)
@@ -44,24 +98,103 @@ struct ReservationsView: View {
                         .frame(maxWidth: .infinity, alignment: .center)
                 } else {
                     ForEach(reservations) { reservation in
-                        ReservationCell(reservation: reservation, type: "Booked Ride")
-                            .padding(.horizontal, 15)
-                            .foregroundColor(.green)
+                        ReservationCell(
+                            reservation: reservation,
+                            type: "Booked Ride",
+                            onCancel: { res in
+                                selectedReservation = res
+                                showingCustomAlert = true
+                            },
+                            width: segmentedViewWidth,
+                            height: 200
+                        )
+                        .padding(.horizontal, 15)
+                        .foregroundColor(.green)
                     }
+                    .onDelete(perform: deleteReservation)
+                    
                     ForEach(acceptedRequests) { request in
-                        ReservationCell(reservation: request, type: "Accepted Request")
-                            .padding(.horizontal, 15)
-                            .foregroundColor(.green)
+                        ReservationCell(
+                            reservation: request,
+                            type: "Accepted Request",
+                            onCancel: { req in
+                                selectedReservation = req
+                                showingCustomAlert = true
+                            },
+                            width: segmentedViewWidth,
+                            height: 200
+                        )
+                        .padding(.horizontal, 15)
+                        .foregroundColor(.green)
                     }
+                    .onDelete(perform: deleteAcceptedRequest)
+                }
+            }
+            .onAppear {
+                fetchReservations()
+                fetchAcceptedRequests()
+            }
+            .sheet(isPresented: $showingCustomAlert) {
+                CustomAlertView(seatsToCancelInput: $seatsToCancelInput, onCancel: { seatsToCancel in
+                    if let reservation = selectedReservation {
+                        cancelReservation(reservation: reservation, seatsToCancel: seatsToCancel)
+                    }
+                }, onDismiss: {
+                    seatsToCancelInput = ""
+                    selectedReservation = nil
+                    showingCustomAlert = false
+                })
+            }
+        }
+    }
+
+    private func cancelReservation(reservation: Reservation, seatsToCancel: Int) {
+        // Use the booking ID from the reservation to cancel the ride
+        DataHandler.shared.cancelRide(bookingId: reservation.id, seatsToCancel: seatsToCancel) { error in
+            handleCancellationResult(error, reservation: reservation)
+        }
+    }
+
+    private func handleCancellationResult(_ error: Error?, reservation: Reservation) {
+        if let error = error {
+            print("Error cancelling reservation: \(error)")
+            return
+        }
+        
+        // Remove the cancelled reservation from the view
+        if reservation.bookerUserID == Auth.auth().currentUser?.uid {
+            reservations.removeAll { $0.id == reservation.id }
+        } else {
+            acceptedRequests.removeAll { $0.id == reservation.id }
+        }
+        
+        // Since the booking node is now deleted within the cancelRide function,
+        // there's no need for a separate deleteBookingFromFirebase call here.
+    }
+
+    private func deleteBookingFromFirebase(rideId: String, bookerUserId: String) {
+        let ref = Database.database().reference().child("bookings")
+        ref.queryOrdered(byChild: "rideID").queryEqual(toValue: rideId).observeSingleEvent(of: .value) { snapshot in
+            for child in snapshot.children {
+                if let childSnapshot = child as? DataSnapshot,
+                   let dict = childSnapshot.value as? [String: Any],
+                   let bookerUserID = dict["bookerUserID"] as? String,
+                   bookerUserID == bookerUserId {
+                    
+                    // Delete the booking
+                    childSnapshot.ref.removeValue { error, _ in
+                        if let error = error {
+                            print("Error deleting booking from Firebase: \(error)")
+                        } else {
+                            print("Booking successfully deleted from Firebase.")
+                        }
+                    }
+                    break // Exit the loop once the correct booking is found and deleted
                 }
             }
         }
-        .onAppear {
-            fetchReservations()
-            fetchAcceptedRequests()
-        }
     }
-    
+
     private func fetchReservations() {
         guard let currentUserID = Auth.auth().currentUser?.uid else {
             print("User not logged in")
@@ -140,8 +273,7 @@ struct ReservationsView: View {
             }
         }
     }
-    
-    
+
     private func fetchAcceptedRequests() {
         guard let currentUserID = Auth.auth().currentUser?.uid else {
             print("User not logged in")
@@ -221,6 +353,15 @@ struct ReservationsView: View {
             }
         }
     }
+
+    private func deleteReservation(at offsets: IndexSet) {
+        reservations.remove(atOffsets: offsets)
+    }
+
+    private func deleteAcceptedRequest(at offsets: IndexSet) {
+        acceptedRequests.remove(atOffsets: offsets)
+    }
+
     func formatDate(dateString: String) -> String {
         let isoDateFormatter = ISO8601DateFormatter()
         isoDateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
@@ -232,9 +373,8 @@ struct ReservationsView: View {
             dateFormatter.timeZone = TimeZone.current // Convert to local time zone
             return dateFormatter.string(from: date)
         } else {
-            // Fallback for different date format or non-standard format
             let fallbackFormatter = DateFormatter()
-            fallbackFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'" // Adjust this format as needed
+            fallbackFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
             fallbackFormatter.timeZone = TimeZone(secondsFromGMT: 0) // UTC
             
             if let fallbackDate = fallbackFormatter.date(from: dateString) {
@@ -244,27 +384,34 @@ struct ReservationsView: View {
                 return dateFormatter.string(from: fallbackDate)
             }
         }
-        return dateString // Return original string if parsing fails
+        return dateString
     }
-    
+
     func formatTime(timeString: String) -> String {
         // Implement time formatting logic similar to date formatting
         // Adjust based on your time format in the database
         return timeString
     }
 }
-    
+
+
+
+
+
 
 struct ReservationCell: View {
     var reservation: Reservation
-    var type: String
-
+       var type: String
+       var onCancel: (Reservation) -> Void // Closure to handle cancellation
+       var width: CGFloat
+       var height: CGFloat
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(type)
                 .font(.headline)
                 .padding(.bottom, 5)
-
+            
             HStack {
                 Image(systemName: "car.fill")
                     .foregroundColor(.blue)
@@ -278,9 +425,9 @@ struct ReservationCell: View {
                         .foregroundColor(.gray)
                 }
             }
-
+            
             Divider().background(Color.gray)
-
+            
             HStack {
                 Image(systemName: "person.fill")
                     .foregroundColor(.secondary)
@@ -289,7 +436,7 @@ struct ReservationCell: View {
                     .font(.subheadline)
                     .foregroundColor(.gray)
             }
-
+            
             HStack {
                 Image(systemName: "phone.fill")
                     .foregroundColor(.secondary)
@@ -304,14 +451,28 @@ struct ReservationCell: View {
                         .foregroundColor(.gray)
                 }
             }
+            
+            Button(action: { onCancel(reservation) }) {
+                Text("Cancel")
+                    .foregroundColor(.red) // Less attention-grabbing color
+                    .font(.subheadline) // Smaller font size
+            }
         }
-        .padding()
+        .padding(5)
         .background(Color.white)
         .cornerRadius(15)
         .shadow(color: Color.gray.opacity(0.4), radius: 5, x: 0, y: 2)
         .padding([.top, .horizontal])
+        .frame(width: width, height: height)
     }
 }
+
+
+
+
+
+
+
 
 struct ReservationsView_Previews: PreviewProvider {
     static var previews: some View {

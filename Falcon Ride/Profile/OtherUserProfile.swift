@@ -10,64 +10,41 @@ import FirebaseDatabase
 import FirebaseAuth
 
 struct OtherUserProfile: View {
-    var rideInfo: RideInfo // Using RideInfo enum
+    var rideInfo: RideInfo
     var additionalInfo: String
+    var fromLocation: String
+    var toLocation: String
+    var time: String
+    var seats: String
+    var donationRequested: String
     @StateObject private var viewModel = OtherUserProfileViewModel()
     
     var body: some View {
-        ScrollView {
-            VStack {
-                Spacer()
-                
-                if viewModel.isLoading {
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: Color.darkBlue))
-                        .scaleEffect(1.5)
-                } else {
-                    OtherProfileHeaderView(name: viewModel.userName, username: viewModel.userUsername, number: viewModel.userNumber, width: 400, height: 200)
-                        .shadow(radius: 10)
-                        .padding()
+        GeometryReader { geometry in
+            ScrollView {
+                VStack(spacing: 0) {
+                    profileHeaderView
+                        .frame(width: geometry.size.width, height: geometry.size.width * 0.5)
+                    
+                    rideInfoSection
+                    
+                    Spacer(minLength: 10)
+                    
+                    seatsStepper
+                    
+                    errorView
+                    
+                    Spacer(minLength: 10) // Push content to the center vertically
+                    
+                    confirmBookingButton
                 }
-                
-                ScrollView(.vertical, showsIndicators: false) {
-                    Text("\"\(additionalInfo)\"")
-                        .frame(maxWidth: .infinity) // ensures full width utilization
-                        .multilineTextAlignment(.center) // center alignment
-                        .font(.system(size: 16)) // or use dynamic type like .body
-                        .padding() // add padding to give some space around the text
-                }
-                .padding(.horizontal)
-                
-                Stepper("Number of Seats: \(viewModel.numberOfSeatsToBook)", value: $viewModel.numberOfSeatsToBook, in: 1...10)
-                    .padding(50)
-                
-                if viewModel.showError {
-                    Text(viewModel.alertMessage)
-                        .foregroundColor(.red)
-                        .padding()
-                }
-                
-                Button(action: {
-                    viewModel.confirmBooking(rideInfo: rideInfo)
-                }) {
-                    Text("Confirm")
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
-                        .frame(minWidth: 0, maxWidth: 200, minHeight: 50)
-                        .background(Color.darkBlue)
-                        .cornerRadius(15)
-                        .padding(.horizontal)
-                }
-                .shadow(radius: 5)
-                .disabled(viewModel.isLoading)
             }
-            .padding()
-            .background(Color.white)
-            .onAppear { viewModel.fetchOtherUserData(rideInfo: rideInfo) }
-            .alert(isPresented: $viewModel.showingAlert) {
-                Alert(title: Text(viewModel.alertMessage))
-            }
+        }
+        .padding()
+        .background(Color.white)
+        .onAppear { viewModel.fetchOtherUserData(rideInfo: rideInfo) }
+        .alert(isPresented: $viewModel.showingAlert) {
+            Alert(title: Text(viewModel.alertMessage))
         }
         .alert(isPresented: $viewModel.shouldPromptForMessage) {
             Alert(
@@ -82,33 +59,85 @@ struct OtherUserProfile: View {
             )
         }
     }
+    
+    var profileHeaderView: some View {
+        if viewModel.isLoading {
+            return AnyView(
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: Color.darkBlue))
+                    .scaleEffect(2.5)
+            )
+        } else {
+            return AnyView(
+                OtherProfileHeaderView(name: viewModel.userName, username: viewModel.userUsername, number: viewModel.userNumber)
+                    .shadow(radius: 10)
+                    .padding()
+            )
+        }
+    }
+    
+    var rideInfoSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            RideInfoCell(
+                additionalInfo: additionalInfo,
+                fromLocation: fromLocation,
+                toLocation: toLocation,
+                time: time,
+                seats: seats,
+                donationRequested: donationRequested
+            )
+        }
+        .padding(.horizontal)
+    }
+    
+    var seatsStepper: some View {
+        Stepper("Number of Seats: \(viewModel.numberOfSeatsToBook)", value: $viewModel.numberOfSeatsToBook, in: 1...10)
+            .padding(.horizontal)
+    }
+    
+    var errorView: some View {
+        if viewModel.showError {
+            return AnyView(
+                Text(viewModel.alertMessage)
+                    .foregroundColor(.red)
+                    .padding()
+            )
+        } else {
+            return AnyView(EmptyView())
+        }
+    }
+    
+    var confirmBookingButton: some View {
+        Button(action: {
+            viewModel.confirmBooking(rideInfo: rideInfo)
+        }) {
+            Text("Confirm Booking")
+                .font(.title2)
+                .fontWeight(.semibold)
+                .foregroundColor(.white)
+                .frame(minWidth: 0, maxWidth: 200, minHeight: 50)
+                .background(Color.darkBlue)
+                .cornerRadius(15)
+                .padding(.horizontal)
+        }
+        .shadow(radius: 5)
+        .disabled(viewModel.isLoading)
+    }
 }
+
 
 struct OtherProfileHeaderView: View {
     var name: String
     var username: String
     var number: String
-    var width: CGFloat
-    var height: CGFloat
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-//            Text(name)
-//                .font(.system(size: 30, weight: .bold, design: .rounded))
-//                .foregroundColor(Color.darkBlue)
-            
             Text("@\(username)")
                 .font(.system(size: 22, weight: .medium, design: .rounded))
                 .foregroundColor(Color.darkBlue)
-            
-//            Text(number)
-//                .font(.system(size: 20, weight: .regular, design: .rounded))
-//                .foregroundColor(Color.black)
-            
-           // Divider().background(Color.darkBlue)
         }
         .padding()
-        .frame(width: width, height: height)
         .background(LinearGradient(gradient: Gradient(colors: [Color.white, Color.blue.opacity(0.3)]), startPoint: .top, endPoint: .bottom))
         .cornerRadius(15)
         .shadow(color: Color.gray.opacity(0.4), radius: 5, x: 0, y: 2)
@@ -173,39 +202,39 @@ class OtherUserProfileViewModel: ObservableObject {
             return
         }
         bookSeats(numberOfSeats: numberOfSeatsToBook, rideInfo: rideInfo)
-
-                // Determine booking type and record the booking
-                let bookingType = getBookingType(rideInfo: rideInfo)
-                let bookerUserID = Auth.auth().currentUser?.uid ?? ""
-                let (rideId, _) = getRideDetails(rideInfo: rideInfo)
-
-                // Assuming that the provider's userID is already stored in rideInfo
-                let providerUserID = getProviderUserID(rideInfo: rideInfo)
-
-                DataHandler.shared.recordBooking(rideID: rideId, bookerUserID: bookerUserID, providerUserID: providerUserID, type: bookingType) { error in
-                    if let error = error {
-                        print("Error recording booking: \(error.localizedDescription)")
-                    }
-                }
+        
+        // Determine booking type and record the booking
+        let bookingType = getBookingType(rideInfo: rideInfo)
+        let bookerUserID = Auth.auth().currentUser?.uid ?? ""
+        let (rideId, _) = getRideDetails(rideInfo: rideInfo)
+        
+        // Assuming that the provider's userID is already stored in rideInfo
+        let providerUserID = getProviderUserID(rideInfo: rideInfo)
+        
+        DataHandler.shared.recordBooking(rideID: rideId, bookerUserID: bookerUserID, providerUserID: providerUserID, type: bookingType) { error in
+            if let error = error {
+                print("Error recording booking: \(error.localizedDescription)")
             }
+        }
+    }
     private func getBookingType(rideInfo: RideInfo) -> String {
-         switch rideInfo {
-         case .reserve(_):
-             return "reservation"
-         case .request(_):
-             return "request"
-         }
-     }
-
-     // Helper method to get the provider's userID from rideInfo
-     private func getProviderUserID(rideInfo: RideInfo) -> String {
-         switch rideInfo {
-         case .reserve(let ride):
-             return ride.userID
-         case .request(let ride2):
-             return ride2.userID
-         }
-     }
+        switch rideInfo {
+        case .reserve(_):
+            return "reservation"
+        case .request(_):
+            return "request"
+        }
+    }
+    
+    // Helper method to get the provider's userID from rideInfo
+    private func getProviderUserID(rideInfo: RideInfo) -> String {
+        switch rideInfo {
+        case .reserve(let ride):
+            return ride.userID
+        case .request(let ride2):
+            return ride2.userID
+        }
+    }
     
     func bookSeats(numberOfSeats: Int, rideInfo: RideInfo) {
         isLoading = true
@@ -253,3 +282,75 @@ class OtherUserProfileViewModel: ObservableObject {
         }
     }
 }
+
+struct RideInfoCell: View {
+    var additionalInfo: String
+    var fromLocation: String
+    var toLocation: String
+    var time: String
+    var seats: String
+    var donationRequested: String
+    
+    var body: some View {
+        HStack(spacing: 16) {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Additional Info")
+                    .font(.headline)
+                    .foregroundColor(.darkBlue)
+                Text("\"\(additionalInfo)\"")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+            
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Text("From:")
+                        .font(.headline)
+                        .foregroundColor(.darkBlue)
+                    Text(fromLocation)
+                        .font(.subheadline)
+                }
+                
+                HStack {
+                    Text("To:")
+                        .font(.headline)
+                        .foregroundColor(.darkBlue)
+                    Text(toLocation)
+                        .font(.subheadline)
+                }
+                
+                HStack {
+                    Text("Time:")
+                        .font(.headline)
+                        .foregroundColor(.darkBlue)
+                    Text(time)
+                        .font(.subheadline)
+                }
+                
+                HStack {
+                    Text("Seats:")
+                        .font(.headline)
+                        .foregroundColor(.darkBlue)
+                    Text(seats)
+                        .font(.subheadline)
+                }
+                
+                HStack {
+                    Text("Donation:")
+                        .font(.headline)
+                        .foregroundColor(.darkBlue)
+                    Text(donationRequested)
+                        .font(.subheadline)
+                }
+            }
+        }
+        .padding(.horizontal)
+        .padding(.vertical, 12)
+        .background(Color.white)
+        .cornerRadius(12)
+        .shadow(radius: 3)
+    }
+}
+
+
+

@@ -9,6 +9,7 @@ import SwiftUI
 import FirebaseDatabase
 import FirebaseAuth
 
+
 struct MyProfile: View {
     @State private var navigateToSettings = false
     @State private var userName = "Loading..."
@@ -51,8 +52,7 @@ struct MyProfile: View {
             VStack {
                 ScrollView {
                     VStack(alignment: .leading) {
-                        ProfileHeaderView(name: userName, username: userUsername, number: userNumber, width: 400, height: 200)
-                            .shadow(radius: 10)
+                        ProfileHeaderView(name: userName, username: userUsername, number: userNumber)
                             .padding()
                         
                         // Segmented Control
@@ -60,7 +60,6 @@ struct MyProfile: View {
                             Text("Reservations").tag(0)
                             Text("Rides").tag(1)
                             Text("Requests").tag(2)
-//                            Text("Accepted Req.").tag(3)
                         }
                         .pickerStyle(SegmentedPickerStyle())
                         .padding()
@@ -70,11 +69,9 @@ struct MyProfile: View {
                         case 0:
                             ReservationsView() // Placeholder for ReservationsView
                         case 1:
-                            PostsView()// Placeholder for PostsView
+                            PostsView() // Placeholder for PostsView
                         case 2:
                             RequestsView() // Placeholder for RequestsView
-//                        case 3:
-//                            PostsView()
                         default:
                             EmptyView()
                         }
@@ -83,7 +80,7 @@ struct MyProfile: View {
                 }
                 
                 // Contact and Version Information
-              
+                
                 
                 NavigationLink(destination: Settings(), isActive: $navigateToSettings) { EmptyView() }
             }
@@ -92,30 +89,32 @@ struct MyProfile: View {
             .background(LinearGradient(gradient: Gradient(colors: [Color.white, Color.gray.opacity(0.2)]), startPoint: .top, endPoint: .bottom))
             .onAppear(perform: fetchUserData)
         }
+        .background(Color.background) // Add a background color or image here
     }
 }
+
 struct ProfileHeaderView: View {
     var name: String
     var username: String
     var number: String
-    var width: CGFloat
-    var height: CGFloat
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             // Name
             Text(name)
-                .font(.system(size: 28, weight: .bold, design: .rounded))
+                .font(.largeTitle)
+                .fontWeight(.bold)
                 .foregroundColor(Color.black)
             
             // Username
             Text("@\(username)")
-                .font(.system(size: 22, weight: .medium, design: .rounded))
+                .font(.title)
+                .fontWeight(.medium)
                 .foregroundColor(Color.darkBlue)
             
             // Number
             Text(number)
-                .font(.system(size: 20, weight: .regular, design: .rounded))
+                .font(.title2)
                 .foregroundColor(Color.black)
             
             // Stylish Divider
@@ -124,24 +123,17 @@ struct ProfileHeaderView: View {
             // Additional User Info or Actions
             HStack {
                 Spacer()
-                //                Button(action: /* Action for Edit */ {}) {
-                //                    Label("Edit Profile (coming soon)", systemImage: "pencil")
-                //                }
-                    .buttonStyle(BorderlessButtonStyle())
+                // Add your Edit Profile button here if needed
                 Spacer()
             }
         }
         .padding()
-        .frame(width: width, height: height)
         .background(LinearGradient(gradient: Gradient(colors: [Color.white, Color.gray.opacity(0.3)]), startPoint: .top, endPoint: .bottom))
         .cornerRadius(15)
         .shadow(color: Color.gray.opacity(0.4), radius: 5, x: 0, y: 2)
-        .padding(.horizontal)
+        .padding()
     }
 }
-
-
-
 
 struct SettingsButton: View {
     var action: () -> Void
@@ -158,4 +150,8 @@ struct MyProfile_Previews: PreviewProvider {
     static var previews: some View {
         MyProfile()
     }
+}
+
+extension Color {
+    static let background = Color.gray.opacity(0.2) // Set your desired background color here
 }
